@@ -95,6 +95,7 @@ int main(int ac, char **av)
                 parallax.drawing_shape(bigBrowser);
                 ball.drawing_shape(bigBrowser);
                 enemy.drawing_shape(bigBrowser);
+                bullet.drawing_shape(bigBrowser);
             }
             window.display();
         }
