@@ -1,0 +1,404 @@
+R-Type Network Protocol (RtNp)
+
+
+--------------Client codes--------------
+
+/connection succeed: 400
+/logout: 401 [player_id]
+/seed expired: 402 [player_id]
+/movement: 403 [player_id] [up |down | left | right]
+/connection failed: 404
+/shot: 405 [player_id] [aim_id]
+/game joined: 406 [player_id]
+/enemy down: 407 [player_id] [enemy_id]
+/player down: 408 [player_id]
+
+
+--------------Server codes--------------
+
+/give id: 500 [id]
+/movement: 503 [player_id] [up |down |left | right]
+/shot: 505 [player_id] [aim_id]
+/game joined: 506 [id_list]
+/enemy down: 507 [enemy_id]
+/player down: 508 [player_id]
+/enemy spawn: 509 [enemy_id] [position.y]
+/obstacle spawn: 510 [position.y] [speed]
+/enemy shot: 511 [enemy_id] [aim_id]
+
+
+---------------More infos---------------
+
+/movement: args are given through numbers (up = 0, down = 1, left = 2, right = 3)
+/strucures spawn: the structures at the position as position.x = 1000 and position.y = position.y
+
+Introduction
+
+Ce document décrit le projet R-Type qui est un projet de 3ème année à Epitech Bénin. Celui-ci vous permettra d'expliquer certains aspects du projet afin que celui-ci
+soit beaucoup plus clair. Il décrit également de nombreuses notions. Vous apprendez la notion de UDP, TCP, ECS, ENET. Vous pourrez égamelent comprendre comment utiliser
+le serveur et le client. Comment tester le projet, comprendre les codes renvoyer par le client et le serveur ainsi.Enfin comment jouer au jeu dans les moindres
+détails.
+Les abbréviations utilisées seront expliquer bien avant les explications en elles mêmes.
+
+1- Qu'est ce que UDP
+C'est le User Datagram Protocol. Il est un des principaux protocoles de télécommunication utilisés par Internet. Il fait partie de la couche transport du modèle OSI,
+quatrième couche de ce modèle, comme TCP. Le rôle de ce protocole est de permettre la transmission de données (sous forme de datagrammes) de manière très simple entre deux entités,
+chacune étant définie par une adresse IP et un numéro de port. Aucune communication préalable n'est requise pour établir la connexion, au contraire de TCP (qui utilise le procédé de handshaking).
+UDP utilise un mode de transmission sans connexion. L'intégrité des données est assurée par une somme de contrôle sur l'en-tête. L'utilisation de cette somme est cependant facultative en
+IPv4 mais obligatoire avec IPv6. Si un hôte n'a pas calculé la somme de contrôle d'un datagramme émis, la valeur de celle-ci est fixée à zéro. La somme de contrôle inclut également les adresses IP
+de la source et de la destination. La nature du protocole UDP le rend utile pour transmettre rapidement de petites quantités de données, depuis un serveur vers de nombreux clients ou bien dans des
+cas où la perte éventuelle d'un datagramme est préférée à l'attente de sa retransmission.
+
+    1.1- Propriété
+        UDP est un protocole de la couche de transport documenté dans la RFC 768. Il ne fournit pas de garantie au protocole de la couche supérieure quant à la livraison du message. De plus, la couche UDP ne
+        retient pas d'information quant à l'état des messages UDP une fois envoyés. Pour ces raisons, on désigne UDP comme un protocole de transmission non fiable.
+        Une liste de propriétés rendent UDP particulièrement adapté à certaines applications.
+
+            * Il est orienté transaction, et donc adapté aux protocoles simples de type requête-réponse tels le DNS ou le NTP.
+            * Il fournit des datagrammes, utiles pour modéliser d'autres protocoles tel que le tunnelage IP (en) ou le Remote procedure call, ainsi que le Network File System.
+            * Il est très simple, ce qui le rend adapté pour l'amorçage d'une machine cliente depuis le réseau (bootstrapping) ou d'autres usages sans pile de protocoles complète, tels DHCP et le protocole
+            simplifié de transferts de fichiers (TFTP).
+            * Il est dit sans état, ce qui est utile dans des cas où de nombreux clients sont présents, telles les applications de streaming (La télévision IP, par exemple).
+            * L'absence de délai de retransmission en fait un protocole utile pour les applications en temps réel. Quelques exemples de ces applications sont la voix sur IP, les jeux en ligne, et de nombreux
+            protocoles construits sur base du Real Time Streaming Protocol.
+            * Il fonctionne efficacement dans des communications unidirectionnelles et est donc adapté pour diffuser des informations comme dans le service discovery (en) ou le protocole d'information de routage.
+
+    1.2- Structure
+        Le paquet UDP est encapsulé dans un paquet IP. Il comporte un en-tête suivi des données proprement dites à transporter.
+        L'en-tête d'un datagramme UDP est plus simple que celui de TCP.
+        Celui-ci contient 4 champs qui sont:
+            * Port Source
+            indique depuis quel port le paquet a été envoyé.
+
+            * Port de Destination
+            indique à quel port le paquet doit être envoyé.
+
+            * Longueur
+            indique la longueur totale (exprimée en octets) du segment UDP (en-tête et données). La longueur minimale est donc de 8 octets (taille de l'en-tête).
+
+            * Somme de contrôle
+            celle-ci permet de s'assurer de l'intégrité du paquet reçu quand elle est différente de zéro. Elle est calculée sur l'ensemble de l'en-tête UDP et des données, mais aussi sur un pseudo en-tête
+            (extrait de l'en-tête IP)
+
+    1.3- Utilisation
+        Il est utilisé quand il est nécessaire soit de transmettre des données très rapidement, et où la perte d'une partie de ces données n'a pas grande importance, ce sont surtout les cas où les requêtes
+        vont dans les deux sens (de client à serveur et inversement) en direct. Soit de transmettre des petites quantités de données, là où la connexion « 3-WAY » TCP serait inutilement coûteuse en ressources.
+        Par exemple, dans le cas de la transmission de la voix sur IP, la perte occasionnelle d'un paquet est tolérable dans la mesure où il existe des mécanismes de substitution des données manquantes, par
+        contre la rapidité de transmission est un critère primordial pour la qualité d'écoute.
+        Il est également utilisé pour émettre des données à plusieurs récepteurs simultanément (multicast, broadcast).
+
+2- Qu'est ce que TCP
+C'est la Transmission Control Protocol. Le protocole TCP ( Transmission Control Protocol ) est l'un des principaux protocoles de la suite de protocoles Internet . Il trouve son origine dans la mise en œuvre
+initiale du réseau dans lequel il a complété le protocole Internet (IP). Par conséquent, l'ensemble de la suite est communément appelé TCP/IP . TCP fournit une livraison fiable , ordonnée et contrôlée contre
+les erreurs d'un flux d' octets (octets) entre les applications s'exécutant sur des hôtes communiquant via un réseau IP. Les principales applications Internet telles que le World Wide Web , le courrier
+électronique , l' administration à distance etle transfert de fichiers repose sur TCP, qui fait partie de la couche transport de la suite TCP/IP. SSL/TLS s'exécute souvent au-dessus de TCP.
+TCP est orienté connexion et une connexion entre le client et le serveur est établie avant que les données puissent être envoyées. Le serveur doit être à l'écoute (ouverture passive) des demandes de connexion
+des clients avant qu'une connexion ne soit établie. La prise de contact à trois voies (ouverture active), la retransmission et la détection d'erreurs ajoutent à la fiabilité mais allongent la latence.
+
+    2.1- Fonction réseau
+        Le Transmission Control Protocol fournit un service de communication à un niveau intermédiaire entre un programme d'application et le protocole Internet. Il fournit une connectivité hôte à hôte au niveau de la
+        couche transport du modèle Internet. Une application n'a pas besoin de connaître les mécanismes particuliers d'envoi de données via un lien vers un autre hôte, comme la fragmentation IP requise pour accueillir
+        l' unité de transmission maximale du support de transmission. Au niveau de la couche de transport, TCP gère tous les détails d'établissement de liaison et de transmission et présente une abstraction de la
+        connexion réseau à l'application, généralement via une interface de socket réseau. Aux niveaux inférieurs de la pile de protocoles, en raison de la congestion du réseau , de l'équilibrage de la charge du
+        trafic ou d'un comportement imprévisible du réseau, les paquets IP peuvent être perdus , dupliqués ou livrés dans le désordre . TCP détecte ces problèmes, demande la retransmission des données perdues,
+        réorganise les données en désordre et aide même à minimiser la congestion du réseau pour réduire l'occurrence des autres problèmes. Si les données ne sont toujours pas livrées, la source est informée de cet
+        échec. Une fois que le récepteur TCP a réassemblé la séquence d'octets initialement transmise, il les transmet à l'application réceptrice. Ainsi, TCP fait abstraction de la communication de l'application à
+        partir des détails de mise en réseau sous-jacents. TCP est largement utilisé par de nombreuses applications Internet, notamment le World Wide Web (WWW), la messagerie électronique , le protocole de transfert
+        de fichiers , Secure Shell , le partage de fichiers peer-to-peer et le streaming multimédia. TCP est optimisé pour une livraison précise plutôt qu'une livraison rapide et peut entraîner des retards relativement
+        longs (de l'ordre de quelques secondes) en attendant des messages en panne ou des retransmissions de messages perdus. Par conséquent, il n'est pas particulièrement adapté aux applications en temps réel telles que la
+        voix sur IP . Pour de telles applications, des protocoles tels que le protocole de transport en temps réel (RTP) fonctionnant sur le protocole de datagramme utilisateur (UDP) sont généralement recommandés à la place.
+
+    2.2- Structure
+        Le protocole de contrôle de transmission accepte les données d'un flux de données, les divise en morceaux et ajoute un en-tête TCP créant un segment TCP. Le segment TCP est ensuite encapsulé dans un datagramme IP
+        (Internet Protocol) et échangé avec des pairs. Un segment TCP se compose d'un en- tête de segment et d'une section de données . L'en-tête du segment contient 10 champs obligatoires et un champ d'extension facultatif
+        ( Options , fond rose dans le tableau). La section de données suit l'en-tête et correspond aux données utiles transportées pour l'application. La longueur de la section de données n'est pas spécifiée dans l'en-tête du segment;
+        Il peut être calculé en soustrayant la longueur combinée de l'en-tête de segment et de l'en-tête IP de la longueur totale du datagramme IP spécifiée dans l'en-tête IP.
+        * Port de source
+            Identifie le port d'envoi.
+        * Port de destination (16 bits)
+            Identifie le port de réception.
+        * Numéro de séquence (32 bits)
+            A un double rôle :
+                - Si le drapeau SYN est défini (1), il s'agit du numéro de séquence initial. Le numéro de séquence du premier octet de données réel et le numéro acquitté dans l'ACK correspondant sont alors ce numéro de séquence plus 1.
+                - Si le drapeau SYN est clair (0), il s'agit du numéro de séquence cumulé du premier octet de données de ce segment pour la session en cours.
+        * Numéro d'accusé de réception (32 bits)
+            Si le drapeau ACK est défini, la valeur de ce champ est le prochain numéro de séquence attendu par l'expéditeur de l'ACK. Cela accuse réception de tous les octets précédents (le cas échéant). Le premier ACK envoyé par chaque
+            extrémité accuse réception du numéro de séquence initial de l'autre extrémité lui-même, mais pas de données.
+
+    2.3- Fonctionnement
+        Les opérations du protocole TCP peuvent être divisées en trois phases. L'établissement de la connexion est un processus d'établissement de liaison en plusieurs étapes qui établit une connexion avant d'entrer dans la phase de transfert
+        de données . Une fois le transfert de données terminé, la terminaison de connexion ferme la connexion et libère toutes les ressources allouées. Une connexion TCP est gérée par un système d'exploitation via une ressource qui représente
+        le point d'extrémité local des communications, le socket Internet . Pendant la durée de vie d'une connexion TCP, le point d'extrémité local subit une série de changements d' état 
+
+        * Etablissement de la connexion 
+            Avant qu'un client ne tente de se connecter à un serveur, le serveur doit d'abord se connecter et écouter un port pour l'ouvrir aux connexions : c'est ce qu'on appelle une ouverture passive. Une fois l'ouverture passive établie, un
+            client peut établir une connexion en initiant une ouverture active à l'aide de la poignée de main en trois étapes (ou en trois étapes) :
+            - SYN : L'ouverture active est effectuée par le client qui envoie un SYN au serveur. Le client définit le numéro de séquence du segment sur une valeur aléatoire A.
+            - SYN-ACK : En réponse, le serveur répond par un SYN-ACK. Le numéro d'accusé de réception est défini sur un de plus que le numéro de séquence reçu, c'est-à-dire A+1, et le numéro de séquence que le serveur choisit pour le paquet est
+            un autre nombre aléatoire, B.
+            - ACK : Enfin, le client renvoie un ACK au serveur. Le numéro de séquence est réglé sur la valeur d'accusé de réception reçu, c'est-à-dire A+1, et le numéro d'accusé de réception est réglé sur un de plus que le numéro de séquence reçu,
+            c'est-à-dire B+1.
+            Les étapes 1 et 2 établissent et accusent réception du numéro de séquence pour une direction. Les étapes 2 et 3 établissent et accusent réception du numéro de séquence pour l'autre sens. Après l'achèvement de ces étapes, le client et
+            le serveur ont reçu des accusés de réception et une communication en duplex intégral est établie.
+
+        * Interruption de la connexion 
+            La phase de terminaison de connexion utilise une poignée de main à quatre voies, chaque côté de la connexion se terminant indépendamment. Lorsqu'un point d'extrémité souhaite arrêter sa moitié de la connexion, il transmet un paquet FIN,
+            dont l'autre extrémité accuse réception avec un ACK. Par conséquent, un démontage typique nécessite une paire de segments FIN et ACK de chaque point de terminaison TCP. Une fois que le côté qui a envoyé le premier FIN a répondu avec l'ACK
+            final, il attend un délai d'attente avant de fermer définitivement la connexion, période pendant laquelle le port local est indisponible pour les nouvelles connexions ; cela évite une éventuelle confusion qui peut se produire si des paquets
+            retardés associés à une connexion précédente sont livrés lors d'une connexion ultérieure. Il est également possible de mettre fin à la connexion par une poignée de main à trois, lorsque l'hôte A envoie un FIN et que l'hôte B répond par un FIN
+            & ACK (combinant deux étapes en une) et que l'hôte A répond par un ACK.
+            Certains systèmes d'exploitation, tels que Linux et HP-UX , implémentent une séquence de fermeture semi-duplex. Si l'hôte ferme activement une connexion, tout en ayant toujours des données entrantes non lues disponibles, l'hôte envoie le signal
+            RST (perdant toutes les données reçues) au lieu de FIN. Cela garantit qu'une application TCP est consciente qu'il y a eu une perte de données. Une connexion peut être dans un état semi-ouvert , auquel cas un côté a mis fin à la connexion,
+            mais pas l'autre. Le côté qui s'est terminé ne peut plus envoyer de données dans la connexion, mais l'autre côté le peut. Le côté de terminaison doit continuer à lire les données jusqu'à ce que l'autre côté se termine également.
+
+        * Utilisation des ressources 
+            La plupart des implémentations allouent une entrée dans une table qui mappe une session à un processus du système d'exploitation en cours d'exécution. Étant donné que les paquets TCP n'incluent pas d'identifiant de session, les deux points de terminaison
+            identifient la session à l'aide de l'adresse et du port du client. Chaque fois qu'un paquet est reçu, l'implémentation TCP doit effectuer une recherche sur cette table pour trouver le processus de destination. Chaque entrée de la table est appelée Transmission
+            Control Block ou TCB. Il contient des informations sur les points de terminaison (IP et port), l'état de la connexion, les données d'exécution sur les paquets échangés et les tampons pour l'envoi et la réception de données. Le nombre de sessions côté serveur
+            n'est limité que par la mémoire et peut augmenter à mesure que de nouvelles connexions arrivent, mais le client doit allouer un port éphémère avant d'envoyer le premier SYN au serveur. Ce port reste alloué pendant toute la conversation et limite effectivement
+            le nombre de connexions sortantes depuis chacune des adresses IP du client. Si une application ne parvient pas à fermer correctement les connexions non requises, un client peut manquer de ressources et devenir incapable d'établir de nouvelles connexions TCP,
+            même à partir d'autres applications.
+            Les deux points de terminaison doivent également allouer de l'espace pour les paquets non acquittés et les données reçues (mais non lues).
+
+        * Transfert de données 
+            Le protocole de contrôle de transmission diffère par plusieurs caractéristiques clés par rapport au protocole de datagramme utilisateur :
+                - Transfert de données ordonné : l'hôte de destination réorganise les segments selon un numéro de séquence
+                - Retransmission des paquets perdus : tout flux cumulé non acquitté est retransmis
+                - Transfert de données sans erreur : les paquets corrompus sont traités comme perdus et sont retransmis
+                - Contrôle de flux : limite la vitesse à laquelle un expéditeur transfère des données pour garantir une livraison fiable. Le récepteur indique continuellement à l'expéditeur la quantité de données pouvant être reçue. Lorsque la mémoire tampon de l'hôte récepteur se
+                remplit, l'accusé de réception suivant suspend le transfert et autorise le traitement des données dans la mémoire tampon.
+                - Contrôle de la congestion : les paquets perdus (présumés en raison de la congestion) déclenchent une réduction du débit de livraison des données
+    
+    2.4- Vulnérabilités
+        TCP peut être attaqué de diverses manières.
+            * Déni de service
+                En utilisant une adresse IP usurpée et en envoyant à plusieurs reprises des paquets SYN assemblés à dessein , suivis de nombreux paquets ACK, les attaquants peuvent amener le serveur à consommer de grandes quantités de ressources en gardant une trace des fausses
+                connexions. C'est ce qu'on appelle une attaque par inondation SYN . Les solutions proposées à ce problème incluent les cookies SYN et les puzzles cryptographiques, bien que les cookies SYN aient leur propre ensemble de vulnérabilités. Sockstress est une attaque similaire,
+                qui pourrait être atténuée par la gestion des ressources système. [35] Une attaque DoS avancée impliquant l'exploitation du TCP Persist Timer a été analysée dans Phrack #66. Les inondations PUSH et ACK sont d'autres variantes.
+            * Détournement de connexion
+                Un attaquant capable d'écouter une session TCP et de rediriger des paquets peut détourner une connexion TCP. Pour ce faire, l'attaquant apprend le numéro de séquence à partir de la communication en cours et forge un faux segment qui ressemble au segment suivant dans le flux.
+                Un détournement aussi simple peut entraîner l'acceptation erronée d'un paquet à une extrémité. Lorsque l'hôte récepteur accuse réception du segment supplémentaire de l'autre côté de la connexion, la synchronisation est perdue. Le piratage peut être combiné avec le protocole
+                de résolution d'adresse ( ARP ) ou des attaques de routage qui permettent de prendre le contrôle du flux de paquets, afin d'obtenir un contrôle permanent de la connexion TCP piratée. L'emprunt d'identité d'une adresse IP différente n'était pas difficile avant la RFC 1948,
+                lorsque le numéro de séquence initial était facilement devinable. Cela permettait à un attaquant d'envoyer aveuglément une séquence de paquets que le récepteur croirait provenir d'une adresse IP différente, sans avoir besoin de déployer des attaques ARP ou de routage : il
+                suffit de s'assurer que l'hôte légitime de l'adresse IP usurpée est en panne , ou le mettre dans cet état en utilisant des attaques par déni de service . C'est pourquoi le numéro de séquence initial est maintenant choisi au hasard.
+            * Veto TCP 
+                Un attaquant qui peut écouter et prédire la taille du prochain paquet à envoyer peut amener le récepteur à accepter une charge utile malveillante sans interrompre la connexion existante. L'attaquant injecte un paquet malveillant avec le numéro de séquence et une taille de charge
+                utile du prochain paquet attendu. Lorsque le paquet légitime est finalement reçu, il s'avère qu'il a le même numéro de séquence et la même longueur qu'un paquet déjà reçu et est silencieusement abandonné comme un paquet en double normal - le paquet légitime est « opposé au veto »
+                par le paquet malveillant. Contrairement au détournement de connexion, la connexion n'est jamais désynchronisée et la communication se poursuit normalement après l'acceptation de la charge utile malveillante. Le veto TCP donne à l'attaquant moins de contrôle sur la communication,
+                mais rend l'attaque particulièrement résistante à la détection. La forte augmentation du trafic réseau due à la tempête ACK est évitée. La seule preuve pour le récepteur que quelque chose ne va pas est un seul paquet en double, une occurrence normale dans un réseau IP. L'expéditeur
+                du paquet faisant l'objet d'un veto ne voit jamais aucune preuve d'une attaque.
+
+3- Qu'est ce que ENET
+ENet evolved specifically as a UDP networking layer for the multiplayer first person shooter Cube.
+Cube necessitated low latency communication with data sent out very frequently, so TCP was an unsuitable choice due to its high latency and stream orientation. UDP, however, lacks many sometimes necessary features from TCP such as reliability, sequencing, unrestricted packet sizes, and connection
+management. So UDP by itself was not suitable as a network protocol either. No suitable freely available networking libraries existed at the time of ENet's creation to fill this niche.
+UDP and TCP could have been used together in Cube to benefit somewhat from both of their features, however, the resulting combinations of protocols still leaves much to be desired. TCP lacks multiple streams of communication without resorting to opening many sockets and complicates delineation of
+packets due to its buffering behavior. UDP lacks sequencing, connection management, management of bandwidth resources, and imposes limitations on the size of packets. A significant investment is required to integrate these two protocols, and the end result is worse off in features and performance
+than the uniform protocol presented by ENet.
+
+    3.1- Connection Management
+        ENet provides a simple connection interface over which to communicate with a foreign host. The liveness of the connection is actively monitored by pinging the foreign host at frequent intervals, and also monitors the network conditions from the local host to the foreign host such as the mean
+        round trip time and packet loss in this fashion.
+    
+    3.2- Sequencing
+        Rather than a single byte stream that complicates the delineation of packets, ENet presents connections as multiple, properly sequenced packet streams that simplify the transfer of various types of data.
+        ENet provides sequencing for all packets by assigning to each sent packet a sequence number that is incremented as packets are sent. ENet guarantees that no packet with a higher sequence number will be delivered before a packet with a lower sequence number, thus ensuring packets are delivered
+        exactly in the order they are sent.
+        For unreliable packets, ENet will simply discard the lower sequence number packet if a packet with a higher sequence number has already been delivered. This allows the packets to be dispatched immediately as they arrive, and reduce latency of unreliable packets to an absolute minimum. For reliable
+        packets, if a higher sequence number packet arrives, but the preceding packets in the sequence have not yet arrived, ENet will stall delivery of the higher sequence number packets until its predecessors have arrived.
+
+    3.3- Channels
+        Since ENet will stall delivery of reliable packets to ensure proper sequencing, and consequently any packets of higher sequence number whether reliable or unreliable, in the event the reliable packet's predecessors have not yet arrived, this can introduce latency into the delivery of other packets which may
+        not need to be as strictly ordered with respect to the packet that stalled their delivery.
+        To combat this latency and reduce the ordering restrictions on packets, ENet provides multiple channels of communication over a given connection. Each channel is independently sequenced, and so the delivery status of a packet in one channel will not stall the delivery of other packets in another channel.
+
+    3.4- Reliability
+        ENet provides optional reliability of packet delivery by ensuring the foreign host acknowledges receipt of all reliable packets. ENet will attempt to resend the packet up to a reasonable amount of times, if no acknowledgement of the packet's receipt happens within a specified timeout. Retry timeouts are
+        progressive and become more lenient with every failed attempt to allow for temporary turbulence in network conditions.
+
+    3.4- Fragmentation and Reassembly
+        ENet will send and deliver packets regardless of size. Large packets are fragmented into many smaller packets of suitable size, and reassembled on the foreign host to recover the original packet for delivery. The process is entirely transparent to the developer.
+
+    3.5- Aggregation
+        ENet aggregates all protocol commands, including acknowledgements and packet transfer, into larger protocol packets to ensure the proper utilization of the connection and to limit the opportunities for packet loss that might otherwise result in further delivery latency.
+
+    3.6- Adaptability
+        ENet provides an in-flight data window for reliable packets to ensure connections are not overwhelmed by volumes of packets. It also provides a static bandwidth allocation mechanism to ensure the total volume of packets sent and received to a host don't exceed the host's capabilities. Further, ENet also
+        provides a dynamic throttle that responds to deviations from normal network connections to rectify various types of network congestion by further limiting the volume of packets sent.
+
+    3.7- Portability
+        ENet works on Windows and any other Unix or Unix-like platform providing a BSD sockets interface. The library has a small and stable code base that can easily be extended to support other platforms and integrates easily. ENet makes no assumptions about the underlying platform's endianess or word size.
+
+    3.8- Freedom
+        ENet demands no royalties and doesn't carry a viral license that would restrict you in how you might use it in your programs. ENet is licensed under a short-and-sweet MIT-style license, which gives you the freedom to do anything you want with it (well, almost anything).
+
+4- Qu'est ce que ECS
+Signifie Entity Component System. C'est un modèle d'architecture logicielle principalement utilisé dans le développement de jeux vidéo pour la représentation d'objets du monde du jeu. Un ECS comprend des entités composées de composants de données, avec des systèmes qui fonctionnent sur les composants des entités.
+ECS suit le principe de composition plutôt que d'héritage, ce qui signifie que chaque entité est définie non pas par une hiérarchie de types, mais par les composants qui lui sont associés. Les systèmes agissent globalement sur toutes les entités qui ont les composants requis.
+
+    4.1- Caractéristiques
+        * Entité: Une entité représente un objet à usage général. Dans un contexte de moteur de jeu, par exemple, chaque objet de jeu grossier est représenté comme une entité. Habituellement, il ne s'agit que d'un identifiant unique. Les implémentations utilisent généralement un entier simple pour cela.
+
+        * Composant: un composant étiquette une entité comme possédant un aspect particulier et contient les données nécessaires pour modéliser cet aspect. Par exemple, chaque objet de jeu susceptible de subir des dégâts peut avoir un composant Santé associé à son entité. Les implémentations utilisent
+        généralement des structures , des classes ou des tableaux associatifs.
+
+        * Système: Un système est un processus qui agit sur toutes les entités avec les composants souhaités. Par exemple, un système physique peut rechercher des entités ayant des composants de masse, de vitesse et de position, et itérer sur les résultats en effectuant des calculs physiques sur les ensembles de composants pour chaque entité.
+        
+        Le comportement d'une entité peut être modifié lors de l'exécution par des systèmes qui ajoutent, suppriment ou modifient des composants. Cela élimine les problèmes d'ambiguïté des hiérarchies d'héritage profondes et larges souvent trouvées dans les techniques de programmation orientée objet qui sont difficiles à comprendre, à maintenir
+        et à étendre. Les approches ECS courantes sont hautement compatibles avec les techniques de conception orientées données et sont souvent associées à celles-ci . Les données de toutes les instances d'un composant sont généralement stockées ensemble dans la mémoire physique, ce qui permet un accès efficace à la mémoire pour les systèmes qui
+        fonctionnent sur de nombreuses entités.    
+
+    4.2- Variantes
+    La disposition des données des différents ECS peut différer, ainsi que la définition des composants, leur relation avec les entités et la manière dont les systèmes accèdent aux composants des entités.
+        * ECS
+            Une entité se compose uniquement d'un ID pour accéder aux composants. Il est courant d'utiliser un identifiant unique pour chaque entité. Ce n'est pas une obligation, mais cela présente plusieurs avantages:
+                - L'entité peut être référencée à l'aide de l'ID au lieu d'un pointeur. Ceci est plus robuste, car cela permettrait de détruire l'entité sans laisser de pointeurs pendants.
+                - Cela aide à enregistrer l'état en externe. Lorsque l'état est à nouveau chargé, il n'est pas nécessaire de reconstruire les pointeurs.
+                - Les données peuvent être mélangées dans la mémoire selon les besoins.
+                - Les identifiants d'entité peuvent être utilisés lors de la communication sur un réseau pour identifier de manière unique l'entité.
+            Certains de ces avantages peuvent également être obtenus à l'aide de pointeurs intelligents.
+
+        * Le moteur de jeu Unity 
+            La mise en page de Unity comporte des tables chacune avec des colonnes de composants. Dans ce système, un type d'entité est basé sur les composants qu'il contient. Pour chaque type d' entité , il existe une table (appelée archétype ) contenant des colonnes de composants qui correspondent aux composants utilisés dans l'entité. Pour accéder
+            à une entité particulière, il faut trouver l'archétype (table) correct et indexer dans chaque colonne pour obtenir chaque composant correspondant à cette entité.
+
+        * Apparatus 
+            Apparatus est une implémentation ECS tierce pour Unreal Engine qui a introduit des fonctionnalités supplémentaires au paradigme ECS commun. L'une de ces fonctionnalités est la prise en charge de la hiérarchie des types pour les composants. Chaque composant peut avoir un type de composant de base (ou une classe de base) un peu comme dans la
+            POO . Un système peut alors interroger la classe de base et faire correspondre tous ses descendants dans la sélection d'entités résultante. Cela peut être très utile pour qu'une logique commune soit implémentée sur un ensemble de composants différents et ajoute une dimension supplémentaire au paradigme.
+    4.3- Modèles courants d'utilisation
+        La manière normale de transmettre des données entre systèmes consiste à stocker les données dans des composants, puis à faire en sorte que chaque système accède au composant de manière séquentielle. Par exemple, la position d'un objet peut être mise à jour régulièrement. Cette position est ensuite utilisée par d'autres systèmes. S'il y a beaucoup
+        d'événements peu fréquents différents, beaucoup d'indicateurs seront nécessaires dans un ou plusieurs composants. Les systèmes devront alors surveiller ces indicateurs à chaque itération, ce qui peut devenir inefficace. Une solution pourrait être d'utiliser le modèle d'observateur . Tous les systèmes qui dépendent d'un événement y souscrivent.
+        L'action de l'événement ne sera donc exécutée qu'une seule fois, lorsqu'elle se produit, et aucune interrogation n'est nécessaire.
+        L'architecture ECS n'a aucun problème avec les problèmes de dépendance que l'on trouve couramment dans la programmation orientée objet puisque les composants sont de simples compartiments de données, ils n'ont aucune dépendance. Chaque système interrogera généralement l'ensemble de composants qu'une entité doit avoir pour que le système fonctionne
+        dessus. Par exemple, un système de rendu peut enregistrer le modèle, la transformation et les composants dessinables. Lorsqu'il s'exécute, le système exécute sa logique sur toute entité qui possède tous ces composants. D'autres entités sont simplement ignorées, sans avoir besoin d'arbres de dépendance complexes. Cependant, cela peut être un endroit
+        où les bogues peuvent se cacher, car la propagation des valeurs d'un système à un autre via des composants peut être difficile à déboguer. ECS peut être utilisé lorsque des données non couplées doivent être liées à une durée de vie donnée.
+        L'architecture ECS utilise la composition plutôt que les arbres d'héritage. Une entité sera généralement composée d'un ID et d'une liste de composants qui lui sont attachés. Tout objet de jeu peut être créé en ajoutant les bons composants à une entité. Cela permet au développeur d'ajouter facilement des fonctionnalités d'un objet à un autre, sans
+        aucun problème de dépendance. Par exemple, une entité de joueur pourrait avoir un composant de balle ajouté, puis elle répondrait aux exigences pour être manipulée par un système bulletHandler , ce qui pourrait amener ce joueur à endommager des choses en les heurtant.
+        Les mérites de l'utilisation des ECS pour stocker l'état du jeu ont été proclamés par de nombreux développeurs de jeux comme Adam Martin. Un bon exemple est les articles de blog de Richard Lord où il discute des mérites et pourquoi les systèmes de stockage de données de jeu conçus par ECS sont si utiles.
+
+5- Qu'est ce qu'un serveur en programmation
+    Un serveur est un programme ou un dispositif informatique qui fournit un service à un autre programme informatique et à son utilisateur, également appelé client. Dans un centre de données, l'ordinateur physique sur lequel un programme serveur est exécuté est aussi fréquemment appelé serveur.
+
+6- Qu'est ce qu'un client en programmation
+    Le Client est un programme logiciel qui s'exécute sur l'ordinateur personnel de l'Utilisateur final et qui permet à ce dernier d'accéder aux Serveurs pour jouer la Version Locale.
+
+7- Les codes du Server au Client ou du Client au Server
+    Le server et le client renvoie des codes de 3 chiffres après certaines actions. Voici tous les codes renvoyés:
+    - /connection succeed: 400
+            Code renvoyer par le client lorsqu'il se connecte au serveur. Il renvoie le code 400
+    - /logout: 401 [player_id]
+            Code renvoyer par le client lorsqu'il se déconnecte au serveur. Il renvoie le code 401
+    - /seed expired: 402 [player_id]
+    - /movement: 403 [player_id] [up |down | left | right]
+            Code renvoyer par le client lorsque le joueur effectue un mouvement vers le haut, le bas, à gauche ou à droite. Il renvoie le code 403.
+            [player_id] représente l'id du joueurqui viens de bouger.
+    - /connection failed: 404
+            Code renvoyer par le client lorsque la connection au serveur a échoué. Il renvoie le code 404
+    - /shot: 405 [player_id] [aim_id]
+            Code renvoyer par le client lorsqu'il effectue un tir. Il renvoie le code 405
+            [player_id] est l'id du client qui vient de tirer
+            [aim_id] ...
+    - /game joined: 406 [player_id]
+            Code renvoyer par le client lorsqu'il rejoint la partie. Il renvoie le code 406.
+            [player_id] représente l'id du joueur qui rejoins la partie.
+    - /enemy down: 407 [player_id] [enemy_id]
+            Code renvoyer par le client lorsqu'un ennemie est mort chez un joueur. Il renvoie le code 407.
+            [player_id] représente l'id du joueur chez qui l'ennemie est mort.
+            [enemy_id] représente l'id de l'ennemiequi a été tué.
+    - /player down: 408 [player_id]
+            Code renvoyer par le client lorsqu'il est meurt. Il renvoie le code 408.
+            [player_id] représente l'id du joueur chez qui l'ennemie est mort.
+    - /give id: 500 [id]
+            Code renvoyer par le serveur lorsqu'il attribue un id à un joueur. Il renvoie le code 500
+            [id] est l'id attribué au client connecté
+    - /movement: 503 [player_id] [up |down |left | right]
+            Code renvoyer par le serveur lorsque l'un des joueurs vient de bouger vers le haut, le bas, à gauche ou à droit. Il renvoie le code 503.
+            [player_id] représente l'id du joueur qui viens de bouger.
+    - /shot: 505 [player_id] [aim_id]
+            Code renvoyer par le serveur lorsqu'un joueur effectue un tir. Il renvoie le code 505
+            [player_id] est l'id attribué au client qui vient de tirer
+            [aim_id] ...
+    - /game joined: 506 [id_list]
+            Code renvoyer par le serveur lorsqu'un joueur vient de rejoindre la partie. Il renvoie le code 506
+            [id_list] est la liste d'id attribué aux clients connectés
+    - /enemy down: 507 [enemy_id]
+            Code renvoyer par le serveur lorsqu'il attribue un id à un joueur. Il renvoie le code 507
+            [enemy_id] est l'id de l'ennemie qui viens de mourir.
+    - /player down: 508 [player_id]
+            Code renvoyer par le serveur lorsque l'un des joueurs vient de mourir. Il renvoie le code 508
+            [player_id] est l'id du joueur qui viens de mourir.
+    - /enemy spawn: 509 [enemy_id] [position.y]
+            Code renvoyer par le serveur lorsqu'un ennemie vient d'apparaître. Il renvoie le code 509
+            [enemy_id] est l'id attribué à l'ennemie qui vient d'apparaître.
+            [position.y] représente la position à laquelle l'ennemie apparaît.
+    - /obstacle spawn: 510 [position.y] [speed]
+            Code renvoyer par le serveur lorsqu'un obstacle apparaît. Il renvoie le code 510
+            [position.y] représente la position à laquelle l'obstacle apparaît.
+            [speed] c'est la vitesse de l'obstacle
+    - /enemy shot: 511 [enemy_id] [aim_id]
+            Code renvoyer par le serveur lorsqu'un effectue un tir. Il renvoie le code 511
+            [enemy_id] est l'id de l'ennemie qui viens de tirer.
+            [aim_id] ...
+    - /movement: args are given through numbers (up = 0, down = 1, left = 2, right = 3)
+    - /strucures spawn: the structures at the position as position.x = 1000 and position.y = position.y
+
+8- Codes renvoyer par le serveur
+    Voici les différents codes que renvoient le serveur:
+        - /give id: 500 [id]
+            Code renvoyer par le serveur lorsqu'il attribue un id à un joueur. Il renvoie le code 500
+            [id] est l'id attribué au client connecté
+        - /movement: 503 [player_id] [up |down |left | right]
+                Code renvoyer par le serveur lorsque l'un des joueurs vient de bouger vers le haut, le bas, à gauche ou à droit. Il renvoie le code 503.
+                [player_id] représente l'id du joueur qui viens de bouger.
+        - /shot: 505 [player_id] [aim_id]
+                Code renvoyer par le serveur lorsqu'un joueur effectue un tir. Il renvoie le code 505
+                [player_id] est l'id attribué au client qui vient de tirer
+                [aim_id] ...
+        - /game joined: 506 [id_list]
+                Code renvoyer par le serveur lorsqu'un joueur vient de rejoindre la partie. Il renvoie le code 506
+                [id_list] est la liste d'id attribué aux clients connectés
+        - /enemy down: 507 [enemy_id]
+                Code renvoyer par le serveur lorsqu'il attribue un id à un joueur. Il renvoie le code 507
+                [enemy_id] est l'id de l'ennemie qui viens de mourir.
+        - /player down: 508 [player_id]
+                Code renvoyer par le serveur lorsque l'un des joueurs vient de mourir. Il renvoie le code 508
+                [player_id] est l'id du joueur qui viens de mourir.
+        - /enemy spawn: 509 [enemy_id] [position.y]
+                Code renvoyer par le serveur lorsqu'un ennemie vient d'apparaître. Il renvoie le code 509
+                [enemy_id] est l'id attribué à l'ennemie qui vient d'apparaître.
+                [position.y] représente la position à laquelle l'ennemie apparaît.
+        - /obstacle spawn: 510 [position.y] [speed]
+                Code renvoyer par le serveur lorsqu'un obstacle apparaît. Il renvoie le code 510
+                [position.y] représente la position à laquelle l'obstacle apparaît.
+                [speed] c'est la vitesse de l'obstacle
+        - /enemy shot: 511 [enemy_id] [aim_id]
+                Code renvoyer par le serveur lorsqu'un effectue un tir. Il renvoie le code 511
+                [enemy_id] est l'id de l'ennemie qui viens de tirer.
+                [aim_id] ...
+
+9- Codes renvoyer par le client:
+    Voici les différents codes que renvoient le serveur:
+        - /connection succeed: 400
+            Code renvoyer par le client lorsqu'il se connecte au serveur. Il renvoie le code 400
+        - /logout: 401 [player_id]
+                Code renvoyer par le client lorsqu'il se déconnecte au serveur. Il renvoie le code 401
+        - /seed expired: 402 [player_id]
+        - /movement: 403 [player_id] [up |down | left | right]
+                Code renvoyer par le client lorsque le joueur effectue un mouvement vers le haut, le bas, à gauche ou à droite. Il renvoie le code 403.
+                [player_id] représente l'id du joueurqui viens de bouger.
+        - /connection failed: 404
+                Code renvoyer par le client lorsque la connection au serveur a échoué. Il renvoie le code 404
+        - /shot: 405 [player_id] [aim_id]
+                Code renvoyer par le client lorsqu'il effectue un tir. Il renvoie le code 405
+                [player_id] est l'id du client qui vient de tirer
+                [aim_id] ...
+        - /game joined: 406 [player_id]
+                Code renvoyer par le client lorsqu'il rejoint la partie. Il renvoie le code 406.
+                [player_id] représente l'id du joueur qui rejoins la partie.
+        - /enemy down: 407 [player_id] [enemy_id]
+                Code renvoyer par le client lorsqu'un ennemie est mort chez un joueur. Il renvoie le code 407.
+                [player_id] représente l'id du joueur chez qui l'ennemie est mort.
+                [enemy_id] représente l'id de l'ennemiequi a été tué.
+        - /player down: 408 [player_id]
+                Code renvoyer par le client lorsqu'il est meurt. Il renvoie le code 408.
+                [player_id] représente l'id du joueur chez qui l'ennemie est mort.     

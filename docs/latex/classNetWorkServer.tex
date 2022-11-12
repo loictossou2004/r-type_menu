@@ -1,0 +1,353 @@
+\hypertarget{classNetWorkServer}{}\doxysection{Net\+Work\+Server Class Reference}
+\label{classNetWorkServer}\index{NetWorkServer@{NetWorkServer}}
+
+
+Class for Net\+Work Server.  
+
+
+
+
+{\ttfamily \#include $<$server.\+hpp$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classNetWorkServer_a634f5c047c6d0d7f33c2a5e86558cf18}{Net\+Work\+Server}} (int port, char const $\ast$Host\+Name)
+\begin{DoxyCompactList}\small\item\em Construct a new Net Work Server object. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classNetWorkServer_a06cf238582faa36d5402db8c49db9061}{$\sim$\+Net\+Work\+Server}} ()
+\begin{DoxyCompactList}\small\item\em Destroy the Net Work Server object. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{classNetWorkServer_a7a22392f182b9c49144dde7f62a266e9}{Initialize\+\_\+enet\+\_\+\+Server}} ()
+\begin{DoxyCompactList}\small\item\em Initialize enet Server. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{classNetWorkServer_a5c6584455583815209726f9882a577c2}{Call\+\_\+exit}} ()
+\begin{DoxyCompactList}\small\item\em Register a function to be called when `exit' is called. \end{DoxyCompactList}\item 
+E\+Net\+Host $\ast$ \mbox{\hyperlink{classNetWorkServer_a3dcd5ee6804d143f277c53b21cc4ef9f}{Create\+\_\+\+Host\+\_\+\+Server}} ()
+\begin{DoxyCompactList}\small\item\em create Host Enet \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{classNetWorkServer_aa1df9da4834c520859e4b97367142c0a}{Set\+\_\+address\+\_\+\+Host\+\_\+\+Server}} ()
+\begin{DoxyCompactList}\small\item\em Attempts to resolve the host named by the parameter host\+Name and sets the host field in the address parameter if successful. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{classNetWorkServer_a6a35ec1b8b6f1656c0026eff4da01e79}{Host\+\_\+\+Service\+\_\+\+Server}} (int timezone)
+\begin{DoxyCompactList}\small\item\em Enet Host Service. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classNetWorkServer_aeb1e7953aa6ce8bd87dcb568036be315}{Serv\+\_\+\+Packet\+\_\+\+Destroy\+\_\+}} ()
+\begin{DoxyCompactList}\small\item\em Destroy Packet. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classNetWorkServer_a12bc0705d3e9b3680d709e8469d371b4}{Serv\+\_\+\+Destroy\+\_\+\+Host}} ()
+\begin{DoxyCompactList}\small\item\em Destroy Host From server. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{classNetWorkServer_a2f9e61b7218d934c3b0d15cbf29708d2}{initialize\+Enet}} ()
+\begin{DoxyCompactList}\small\item\em Initialize Enet. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{classNetWorkServer_acfac7de9265b054d4d54526a72bc5d4f}{Create\+Host\+Enet}} ()
+\begin{DoxyCompactList}\small\item\em Create a Host Enet object. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classNetWorkServer_a19c7f82a694e4737bdde0ec844410371}{Set\+Host\+Enet}} ()
+\begin{DoxyCompactList}\small\item\em Set the Host Enet object. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classNetWorkServer_ac27c3913f7025a522b687d4d39185d58}{Manage\+Host\+Enet}} ()
+\begin{DoxyCompactList}\small\item\em Manage Host Server. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classNetWorkServer_a75d252c32d65071f78912ba10eed374b}{Run\+Server\+Enet}} ()
+\begin{DoxyCompactList}\small\item\em Run server enet. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classNetWorkServer_aad26e83231baa83b60e3636d2166c151}{Interpreter}} (string sms)
+\begin{DoxyCompactList}\small\item\em Interpreter. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classNetWorkServer_a7223c227ec13193334811d87a80fbed1}\label{classNetWorkServer_a7223c227ec13193334811d87a80fbed1}} 
+vector$<$ int $>$ {\bfseries get\+Rfc\+Args} (int rfc, string sms)
+\item 
+void \mbox{\hyperlink{classNetWorkServer_a03483d9d95cdb96b6658d1003e7d9840}{logout\+Player}} (vector$<$ int $>$ params)
+\begin{DoxyCompactList}\small\item\em Logout Player. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classNetWorkServer_a89e9ffb06a1d872b82b942119b0931c6}{move\+Player}} (std\+::vector$<$ int $>$ params)
+\begin{DoxyCompactList}\small\item\em Move player. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classNetWorkServer_ae65a3452af6650eb9470691a4088ce70}{shot\+Player}} (std\+::vector$<$ int $>$ params)
+\begin{DoxyCompactList}\small\item\em Shot player. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classNetWorkServer_a06c3431f77f089d5a97935b415db1ca2}{game\+Joined}} (std\+::vector$<$ int $>$ params)
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classGame}{Game}} join. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classNetWorkServer_a4c0dec5f7683e322f7c79eb48281f57a}{enemy\+Down}} (std\+::vector$<$ int $>$ params)
+\begin{DoxyCompactList}\small\item\em Enemy Down. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classNetWorkServer_ad4d5991809e6bc32834c34125eabbd6f}{player\+Down}} (std\+::vector$<$ int $>$ params)
+\begin{DoxyCompactList}\small\item\em Player down. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class for Net\+Work Server. 
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classNetWorkServer_a634f5c047c6d0d7f33c2a5e86558cf18}\label{classNetWorkServer_a634f5c047c6d0d7f33c2a5e86558cf18}} 
+\index{NetWorkServer@{NetWorkServer}!NetWorkServer@{NetWorkServer}}
+\index{NetWorkServer@{NetWorkServer}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{NetWorkServer()}{NetWorkServer()}}
+{\footnotesize\ttfamily Net\+Work\+Server\+::\+Net\+Work\+Server (\begin{DoxyParamCaption}\item[{int}]{port,  }\item[{char const $\ast$}]{Host\+Name }\end{DoxyParamCaption})}
+
+
+
+Construct a new Net Work Server object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em port} & \\
+\hline
+{\em Host\+Name} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classNetWorkServer_a06cf238582faa36d5402db8c49db9061}\label{classNetWorkServer_a06cf238582faa36d5402db8c49db9061}} 
+\index{NetWorkServer@{NetWorkServer}!````~NetWorkServer@{$\sim$NetWorkServer}}
+\index{````~NetWorkServer@{$\sim$NetWorkServer}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{$\sim$NetWorkServer()}{~NetWorkServer()}}
+{\footnotesize\ttfamily Net\+Work\+Server\+::$\sim$\+Net\+Work\+Server (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Destroy the Net Work Server object. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classNetWorkServer_a5c6584455583815209726f9882a577c2}\label{classNetWorkServer_a5c6584455583815209726f9882a577c2}} 
+\index{NetWorkServer@{NetWorkServer}!Call\_exit@{Call\_exit}}
+\index{Call\_exit@{Call\_exit}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{Call\_exit()}{Call\_exit()}}
+{\footnotesize\ttfamily int Net\+Work\+Server\+::\+Call\+\_\+exit (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Register a function to be called when `exit' is called. 
+
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classNetWorkServer_a3dcd5ee6804d143f277c53b21cc4ef9f}\label{classNetWorkServer_a3dcd5ee6804d143f277c53b21cc4ef9f}} 
+\index{NetWorkServer@{NetWorkServer}!Create\_Host\_Server@{Create\_Host\_Server}}
+\index{Create\_Host\_Server@{Create\_Host\_Server}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{Create\_Host\_Server()}{Create\_Host\_Server()}}
+{\footnotesize\ttfamily E\+Net\+Host$\ast$ Net\+Work\+Server\+::\+Create\+\_\+\+Host\+\_\+\+Server (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+create Host Enet 
+
+\begin{DoxyReturn}{Returns}
+E\+Net\+Host$\ast$ 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classNetWorkServer_acfac7de9265b054d4d54526a72bc5d4f}\label{classNetWorkServer_acfac7de9265b054d4d54526a72bc5d4f}} 
+\index{NetWorkServer@{NetWorkServer}!CreateHostEnet@{CreateHostEnet}}
+\index{CreateHostEnet@{CreateHostEnet}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{CreateHostEnet()}{CreateHostEnet()}}
+{\footnotesize\ttfamily int Net\+Work\+Server\+::\+Create\+Host\+Enet (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create a Host Enet object. 
+
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classNetWorkServer_a4c0dec5f7683e322f7c79eb48281f57a}\label{classNetWorkServer_a4c0dec5f7683e322f7c79eb48281f57a}} 
+\index{NetWorkServer@{NetWorkServer}!enemyDown@{enemyDown}}
+\index{enemyDown@{enemyDown}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{enemyDown()}{enemyDown()}}
+{\footnotesize\ttfamily void Net\+Work\+Server\+::enemy\+Down (\begin{DoxyParamCaption}\item[{std\+::vector$<$ int $>$}]{params }\end{DoxyParamCaption})}
+
+
+
+Enemy Down. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em params} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classNetWorkServer_a06c3431f77f089d5a97935b415db1ca2}\label{classNetWorkServer_a06c3431f77f089d5a97935b415db1ca2}} 
+\index{NetWorkServer@{NetWorkServer}!gameJoined@{gameJoined}}
+\index{gameJoined@{gameJoined}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{gameJoined()}{gameJoined()}}
+{\footnotesize\ttfamily void Net\+Work\+Server\+::game\+Joined (\begin{DoxyParamCaption}\item[{std\+::vector$<$ int $>$}]{params }\end{DoxyParamCaption})}
+
+
+
+\mbox{\hyperlink{classGame}{Game}} join. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em params} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classNetWorkServer_a6a35ec1b8b6f1656c0026eff4da01e79}\label{classNetWorkServer_a6a35ec1b8b6f1656c0026eff4da01e79}} 
+\index{NetWorkServer@{NetWorkServer}!Host\_Service\_Server@{Host\_Service\_Server}}
+\index{Host\_Service\_Server@{Host\_Service\_Server}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{Host\_Service\_Server()}{Host\_Service\_Server()}}
+{\footnotesize\ttfamily int Net\+Work\+Server\+::\+Host\+\_\+\+Service\+\_\+\+Server (\begin{DoxyParamCaption}\item[{int}]{timezone }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Enet Host Service. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em timezone} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classNetWorkServer_a7a22392f182b9c49144dde7f62a266e9}\label{classNetWorkServer_a7a22392f182b9c49144dde7f62a266e9}} 
+\index{NetWorkServer@{NetWorkServer}!Initialize\_enet\_Server@{Initialize\_enet\_Server}}
+\index{Initialize\_enet\_Server@{Initialize\_enet\_Server}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{Initialize\_enet\_Server()}{Initialize\_enet\_Server()}}
+{\footnotesize\ttfamily int Net\+Work\+Server\+::\+Initialize\+\_\+enet\+\_\+\+Server (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize enet Server. 
+
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classNetWorkServer_a2f9e61b7218d934c3b0d15cbf29708d2}\label{classNetWorkServer_a2f9e61b7218d934c3b0d15cbf29708d2}} 
+\index{NetWorkServer@{NetWorkServer}!initializeEnet@{initializeEnet}}
+\index{initializeEnet@{initializeEnet}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{initializeEnet()}{initializeEnet()}}
+{\footnotesize\ttfamily int Net\+Work\+Server\+::initialize\+Enet (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Initialize Enet. 
+
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classNetWorkServer_aad26e83231baa83b60e3636d2166c151}\label{classNetWorkServer_aad26e83231baa83b60e3636d2166c151}} 
+\index{NetWorkServer@{NetWorkServer}!Interpreter@{Interpreter}}
+\index{Interpreter@{Interpreter}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{Interpreter()}{Interpreter()}}
+{\footnotesize\ttfamily void Net\+Work\+Server\+::\+Interpreter (\begin{DoxyParamCaption}\item[{string}]{sms }\end{DoxyParamCaption})}
+
+
+
+Interpreter. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em sms} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classNetWorkServer_a03483d9d95cdb96b6658d1003e7d9840}\label{classNetWorkServer_a03483d9d95cdb96b6658d1003e7d9840}} 
+\index{NetWorkServer@{NetWorkServer}!logoutPlayer@{logoutPlayer}}
+\index{logoutPlayer@{logoutPlayer}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{logoutPlayer()}{logoutPlayer()}}
+{\footnotesize\ttfamily void Net\+Work\+Server\+::logout\+Player (\begin{DoxyParamCaption}\item[{vector$<$ int $>$}]{params }\end{DoxyParamCaption})}
+
+
+
+Logout Player. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em params} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classNetWorkServer_ac27c3913f7025a522b687d4d39185d58}\label{classNetWorkServer_ac27c3913f7025a522b687d4d39185d58}} 
+\index{NetWorkServer@{NetWorkServer}!ManageHostEnet@{ManageHostEnet}}
+\index{ManageHostEnet@{ManageHostEnet}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{ManageHostEnet()}{ManageHostEnet()}}
+{\footnotesize\ttfamily void Net\+Work\+Server\+::\+Manage\+Host\+Enet (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Manage Host Server. 
+
+\mbox{\Hypertarget{classNetWorkServer_a89e9ffb06a1d872b82b942119b0931c6}\label{classNetWorkServer_a89e9ffb06a1d872b82b942119b0931c6}} 
+\index{NetWorkServer@{NetWorkServer}!movePlayer@{movePlayer}}
+\index{movePlayer@{movePlayer}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{movePlayer()}{movePlayer()}}
+{\footnotesize\ttfamily void Net\+Work\+Server\+::move\+Player (\begin{DoxyParamCaption}\item[{std\+::vector$<$ int $>$}]{params }\end{DoxyParamCaption})}
+
+
+
+Move player. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em params} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classNetWorkServer_ad4d5991809e6bc32834c34125eabbd6f}\label{classNetWorkServer_ad4d5991809e6bc32834c34125eabbd6f}} 
+\index{NetWorkServer@{NetWorkServer}!playerDown@{playerDown}}
+\index{playerDown@{playerDown}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{playerDown()}{playerDown()}}
+{\footnotesize\ttfamily void Net\+Work\+Server\+::player\+Down (\begin{DoxyParamCaption}\item[{std\+::vector$<$ int $>$}]{params }\end{DoxyParamCaption})}
+
+
+
+Player down. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em params} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classNetWorkServer_a75d252c32d65071f78912ba10eed374b}\label{classNetWorkServer_a75d252c32d65071f78912ba10eed374b}} 
+\index{NetWorkServer@{NetWorkServer}!RunServerEnet@{RunServerEnet}}
+\index{RunServerEnet@{RunServerEnet}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{RunServerEnet()}{RunServerEnet()}}
+{\footnotesize\ttfamily void Net\+Work\+Server\+::\+Run\+Server\+Enet (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Run server enet. 
+
+\mbox{\Hypertarget{classNetWorkServer_a12bc0705d3e9b3680d709e8469d371b4}\label{classNetWorkServer_a12bc0705d3e9b3680d709e8469d371b4}} 
+\index{NetWorkServer@{NetWorkServer}!Serv\_Destroy\_Host@{Serv\_Destroy\_Host}}
+\index{Serv\_Destroy\_Host@{Serv\_Destroy\_Host}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{Serv\_Destroy\_Host()}{Serv\_Destroy\_Host()}}
+{\footnotesize\ttfamily void Net\+Work\+Server\+::\+Serv\+\_\+\+Destroy\+\_\+\+Host (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Destroy Host From server. 
+
+\mbox{\Hypertarget{classNetWorkServer_aeb1e7953aa6ce8bd87dcb568036be315}\label{classNetWorkServer_aeb1e7953aa6ce8bd87dcb568036be315}} 
+\index{NetWorkServer@{NetWorkServer}!Serv\_Packet\_Destroy\_@{Serv\_Packet\_Destroy\_}}
+\index{Serv\_Packet\_Destroy\_@{Serv\_Packet\_Destroy\_}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{Serv\_Packet\_Destroy\_()}{Serv\_Packet\_Destroy\_()}}
+{\footnotesize\ttfamily void Net\+Work\+Server\+::\+Serv\+\_\+\+Packet\+\_\+\+Destroy\+\_\+ (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Destroy Packet. 
+
+\mbox{\Hypertarget{classNetWorkServer_aa1df9da4834c520859e4b97367142c0a}\label{classNetWorkServer_aa1df9da4834c520859e4b97367142c0a}} 
+\index{NetWorkServer@{NetWorkServer}!Set\_address\_Host\_Server@{Set\_address\_Host\_Server}}
+\index{Set\_address\_Host\_Server@{Set\_address\_Host\_Server}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{Set\_address\_Host\_Server()}{Set\_address\_Host\_Server()}}
+{\footnotesize\ttfamily int Net\+Work\+Server\+::\+Set\+\_\+address\+\_\+\+Host\+\_\+\+Server (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Attempts to resolve the host named by the parameter host\+Name and sets the host field in the address parameter if successful. 
+
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classNetWorkServer_a19c7f82a694e4737bdde0ec844410371}\label{classNetWorkServer_a19c7f82a694e4737bdde0ec844410371}} 
+\index{NetWorkServer@{NetWorkServer}!SetHostEnet@{SetHostEnet}}
+\index{SetHostEnet@{SetHostEnet}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{SetHostEnet()}{SetHostEnet()}}
+{\footnotesize\ttfamily void Net\+Work\+Server\+::\+Set\+Host\+Enet (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Set the Host Enet object. 
+
+\mbox{\Hypertarget{classNetWorkServer_ae65a3452af6650eb9470691a4088ce70}\label{classNetWorkServer_ae65a3452af6650eb9470691a4088ce70}} 
+\index{NetWorkServer@{NetWorkServer}!shotPlayer@{shotPlayer}}
+\index{shotPlayer@{shotPlayer}!NetWorkServer@{NetWorkServer}}
+\doxysubsubsection{\texorpdfstring{shotPlayer()}{shotPlayer()}}
+{\footnotesize\ttfamily void Net\+Work\+Server\+::shot\+Player (\begin{DoxyParamCaption}\item[{std\+::vector$<$ int $>$}]{params }\end{DoxyParamCaption})}
+
+
+
+Shot player. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em params} & \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Server/includes/server.\+hpp\end{DoxyCompactItemize}

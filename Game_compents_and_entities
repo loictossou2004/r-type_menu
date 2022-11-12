@@ -1,0 +1,52 @@
+Playable characters:
+  - hit_zone
+  - movement_speed
+  - firing_rate
+  - timer
+  - controls
+  - damage multiplier
+  - respawns
+  - dies_animation
+
+Enemies:
+  - HP
+  - hit_zone
+  - movement_speed
+  - direction
+  - firing_rate
+  - timer
+  - damage multiplier
+  - respawns
+  - dies_animation
+
+Projectiles:
+  - hit_zone
+  - base_damage
+  - movement_speed
+  - invulnerability
+  - rebound_effect
+  - range
+
+Explosion:
+  - hit_zone
+  - base_damage
+  - target_type
+
+Power-ups:
+  - obtainability_number
+  - effect
+  - action_time
+  - drop_rate
+  - movement_speed
+
+Obstacles:
+  - destroyable
+  - HP
+  - hit_zone
+  - movement_speed
+  - direction
+  - rebound_effect
+
+Background:
+  - parralax_speed
+  - special_animation
