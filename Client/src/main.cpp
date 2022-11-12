@@ -10,6 +10,19 @@
 
 extern struct all_connexions c_connect;
 
+void create_component_circle(Registry &r, MyLib &lib, std::string file)
+{
+    const entity_t &player = r.spawn_entity();
+    struct MyComponents::Bullet bullet = {lib.LoadTexture("assets/ParallaxAssets/bullet.png"), lib.create_sprite(bullet.texture), std::make_shared<sf::Clock>(), 0, 0, 0};
+    struct MyComponents::Drawable drawn_obj = {lib.LoadTexture(file), lib.create_sprite(drawn_obj.texture)};
+    struct MyComponents::Controllable remote = {sf::Keyboard::Left, sf::Keyboard::Right, sf::Keyboard::Up, sf::Keyboard::Down};
+    r.add_component<MyComponents::Position>(player, MyComponents::Position(30.f, 30.f));
+    r.add_component<MyComponents::Velocity>(player, MyComponents::Velocity(0, 0));
+    r.add_component<MyComponents::Drawable>(player, drawn_obj);
+    r.add_component<MyComponents::Controllable>(player, remote);
+    r.add_component<MyComponents::Bullet>(player, bullet);
+}
+
 int main(int ac, char **av)
 {
     if (ac != 3) {
@@ -27,6 +40,7 @@ int main(int ac, char **av)
         sf::RenderWindow window(sf::VideoMode(1300, 731), "My window");
         sf::Event event;
         /*initialisation*/
+        create_component_circle(bigBrowser, lib, "assets/graphics/players_enemies/player1.png");
         initialize_parallax(bigBrowser, lib);
         create_component_enemy(bigBrowser, lib, "assets/graphics/players_enemies/e_alien.png");
         /*initialization des classes créées pour les systèmes*/
@@ -47,11 +61,11 @@ int main(int ac, char **av)
         MyComponents::Menu menu(window, lib, rect, rect2, rect3, rect4, rect5, rect6);
 
         myClient.Connection_and_initialize();
-        std::unique_lock<std::mutex> lk(c_connect.myMutex);
+        // std::unique_lock<std::mutex> lk(c_connect.myMutex);
         std::thread myThread_2(&NetWorkClient::MsgLoop, &myClient);
-        c_connect.cv.wait(lk);
+        // c_connect.cv.wait(lk);
         /*Créer chaque joueur dans sa map*/
-        create_component_me(bigBrowser, lib, glob::ShipFiles[c_connect.connected], glob::ShipPos[c_connect.connected]);
+        // create_component_me(bigBrowser, lib, glob::ShipFiles[c_connect.connected], glob::ShipPos[c_connect.connected]);
         while (window.isOpen()) {
             while (window.pollEvent(event)) {
                 motion.VelocitySystem(bigBrowser);
@@ -64,9 +78,10 @@ int main(int ac, char **av)
             window.clear(sf::Color::White);
             /*Systèmes pour faire bouger les entités*/
             if (menu.play != 19)
-            {
-                menu.play = 19;
-            }
+             {
+            //    menu.play = 19;
+                menu.drawMenu();
+             }
             else
             {
                 _position.PositionSystem(bigBrowser);
