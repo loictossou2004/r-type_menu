@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['networkclient_148',['NetWorkClient',['../classNetWorkClient.html#a3c6ec71274ca05db8fc95465ae98e500',1,'NetWorkClient']]],
-  ['networkserver_149',['NetWorkServer',['../classNetWorkServer.html#a634f5c047c6d0d7f33c2a5e86558cf18',1,'NetWorkServer']]]
+  ['register_5fcomponent_108',['register_component',['../classRegistry.html#adf45da5951b68c121e0a1f45cf0bc951',1,'Registry']]],
+  ['remove_5fcomponent_109',['remove_component',['../classRegistry.html#a8af690a38f4982d9479401e7c69c33d2',1,'Registry']]]
 ];

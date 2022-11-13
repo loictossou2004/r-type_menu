@@ -52,6 +52,11 @@ void MyLib::draw_sprites(sf::RenderWindow &window, std::shared_ptr<sf::Sprite> s
     window.draw(*sprite);
 }
 
+void MyLib::draw_text(sf::RenderWindow &window, std::shared_ptr<sf::Text> text)
+{
+    window.draw(*text);
+}
+
 void MyLib::draw_circle_shapes(sf::RenderWindow &window, sf::CircleShape &circleshape)
 {
     window.draw(circleshape);
@@ -69,11 +74,39 @@ std::shared_ptr<sf::Texture> MyLib::LoadTexture(std::string file)
     return (std::make_shared<sf::Texture>(texture));
 }
 
+std::shared_ptr<sf::Font> MyLib::LoadFont(std::string file)
+{
+    sf::Font font;
+    font.loadFromFile(file);
+    return (std::make_shared<sf::Font>(font));
+}
+
 std::shared_ptr<sf::Sprite> MyLib::create_sprite(std::shared_ptr<sf::Texture> texture)
 {
     sf::Sprite sprite;
     sprite.setTexture(*texture);
     return (std::make_shared<sf::Sprite>(sprite));
+}
+
+std::shared_ptr<sf::Sprite> MyLib::create_sprite_rect(std::shared_ptr<sf::Texture> texture, sf::IntRect rect)
+{
+    sf::Sprite sprite((*texture), rect);
+    //sprite.setTexture(*texture);
+    return (std::make_shared<sf::Sprite>(sprite));
+}
+
+std::shared_ptr<sf::Text> MyLib::create_text(std::shared_ptr<sf::Font> font, std::string)
+{
+    sf::Text text;
+    text.setFont(*font);
+    text.setString("R- TYPE");
+    text.setCharacterSize(24);
+    text.setFillColor(sf::Color::Red);
+    text.setOutlineColor(sf::Color::Cyan);
+    text.setOutlineThickness(1.4);
+    text.setStyle(sf::Text::Bold);
+    text.setPosition(0,0);
+    return (std::make_shared<sf::Text>(text));
 }
 
 /*sf::Sprite MyLib::create_sprite(std::string file, sf::IntRect rect, sf::Vector2f scale)

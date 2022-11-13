@@ -44,6 +44,10 @@ class MyLib : public IDisplay {
          */
         std::shared_ptr<sf::Sprite> create_sprite(std::shared_ptr<sf::Texture> texture);
 
+        std::shared_ptr<sf::Sprite> create_sprite_rect(std::shared_ptr<sf::Texture> texture, sf::IntRect rect);
+
+        std::shared_ptr<sf::Text> create_text(std::shared_ptr<sf::Font> font, std::string);
+
         /**
          * @brief Close rendered window
          *
@@ -125,6 +129,8 @@ class MyLib : public IDisplay {
          */
         void draw_sprites(sf::RenderWindow &window, std::shared_ptr<sf::Sprite> sprite);
 
+        void draw_text(sf::RenderWindow &window, std::shared_ptr<sf::Text> text);
+
         /**
          * @brief Draw RectangleShape on window
          *
@@ -148,6 +154,8 @@ class MyLib : public IDisplay {
          * @return std::shared_ptr<sf::Texture>
          */
         std::shared_ptr<sf::Texture> LoadTexture(std::string file);
+
+        std::shared_ptr<sf::Font> LoadFont(std::string file);
 
         /**
          * @brief Get elapsed time from Clock Object

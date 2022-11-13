@@ -9,6 +9,7 @@
 #define PARALLAX_HPP_
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include "Component/Registry.hpp"
 #include "System/Systems.hpp"
@@ -34,11 +35,8 @@ namespace MyComponents
         std::shared_ptr<sf::Sprite> back;
         std::shared_ptr<sf::Clock> m_clock;
         int state;
-    };
-
-    struct Scrolling_x
-    {
-        float scroll_value;
+        int alive;
+        int type;
     };
 
     struct Bullet
@@ -49,6 +47,309 @@ namespace MyComponents
         int shot;
         float x;
         float y;
+    };
+
+    struct Bullet_x
+    {
+        std::shared_ptr<sf::Texture> texture;
+        std::shared_ptr<sf::Sprite> back;
+        std::shared_ptr<sf::Clock> m_clock;
+        int shot;
+        float x;
+        float y;
+    };
+
+    struct Power_Up
+    {
+        std::shared_ptr<sf::Texture> texture;
+        std::shared_ptr<sf::Sprite> back;
+        std::shared_ptr<sf::Clock> m_clock;
+        int state;
+    };
+
+    struct Scrolling_x
+    {
+        float scroll_value;
+    };
+
+    class DrawSystem
+    {
+        public:
+
+            /**
+             * @brief Construct a new Draw System object
+             *
+             * @param window
+             * @param lib
+             */
+            DrawSystem(sf::RenderWindow &window, MyLib &lib) : _win(window), _lib(lib){
+                texture.loadFromFile("assets/ParallaxAssets/life.png");
+                //sf::IntRect rect1(0, 0, 171, 36.4);
+                rect = sf::IntRect(0, 0, 171, 36.4);
+                sprite = sf::Sprite(texture, rect);
+                //sprite = res;
+            }
+
+            /**
+             * @brief Destroy the Draw System object
+             *
+             */
+            ~DrawSystem(){};
+            sf::RenderWindow &_win;
+            MyLib &_lib;
+            sf::Texture texture;
+            sf::IntRect rect;
+            sf::Sprite sprite;
+            /**
+             * @brief Create a drawable object
+             *
+             * @param r
+             */
+            void drawing_shape(Registry &r) {
+                auto &drawable = r.get_components<Drawable>();
+                auto &positions = r.get_components<Position>();
+                auto &drawable_x = r.get_components<DrawableSprite_x>();
+                auto &bullet = r.get_components<Bullet_x>();
+
+                std::cout << "size = " << bullet.size() << std::endl;
+                for (size_t i = 0; i < drawable.size() && i < positions.size(); ++ i) {
+                    auto &draw = drawable[i];
+                    auto &pos = positions[i];
+                    if (draw && pos) {
+                        std::cout << "i = " << i << std::endl;
+                        auto shape(draw.value().me);
+                        sf::FloatRect rect1 = (*draw.value().me).getGlobalBounds();
+                        sf::FloatRect rect2;
+                        for (size_t i = 0; i < drawable_x.size() && i < bullet.size(); ++ i) {
+                            auto &bull = bullet[i];
+                            auto &enemy = drawable_x[i];
+                            if (bull && enemy) {
+                                rect2 = (*bull.value().back).getGlobalBounds();
+                            }
+                        }
+                        //sf::FloatRect rect2 = (*bull.value().back).getGlobalBounds();
+                        if (rect1.intersects(rect2))
+                        {
+                            if (draw.value().state == 0)
+                                draw.value().state = 1;
+                        }
+                        else
+                        {
+                            if (draw.value().state == 2)
+                                draw.value().state = 0;
+                        }
+                        if (draw.value().state == 1/* && draw.value().touchable == 1*/)
+                        {
+                            draw.value().life -= 1;
+                            if (draw.value().life < 4)
+                                rect.top += 36.4;
+                            draw.value().state = 2;
+                        }
+                        float one = positions[i].value()._position.first;
+                        float two = positions[i].value()._position.second;
+                        auto shape_x(sprite);
+                        _lib.setPosition(shape, (sf::Vector2f){one, two});
+                        sprite.setPosition((sf::Vector2f){0, 0});
+                        sprite.setTextureRect(rect);
+                        _win.draw(sprite);
+                        if (draw.value().life >= 0)
+                            _lib.draw_sprites(_win, shape);
+                        std::cout << "state = " << draw.value().state << std::endl;
+                    }
+                }
+            }
+    };
+
+    class DrawPUSystem
+    {
+    public:
+        /**
+         * @brief Construct a new Draw Sprite System object
+         *
+         * @param window
+         * @param lib
+         */
+        DrawPUSystem(sf::RenderWindow &window, MyLib &lib) : _win(window), _lib(lib) {}
+
+        /**
+         * @brief Destroy the Draw Sprite System object
+         *
+         */
+        ~DrawPUSystem(){};
+        sf::RenderWindow &_win;
+        MyLib &_lib;
+
+        /**
+         * @brief Draw a sprite
+         *
+         * @param r
+         */
+        void drawing_shape(Registry &r)
+        {
+            auto &drawable = r.get_components<Power_Up>();
+            auto &positions = r.get_components<Position>();
+            auto &bullets = r.get_components<Drawable>();
+
+            for (size_t i = 0; i < drawable.size() && i < positions.size(); ++i)
+            {
+                auto &draw = drawable[i];
+                auto &pos = positions[i];
+                if (draw && pos)
+                {
+                    // for (size_t j = 0; j < bullets.size(); ++ j) {
+                    sf::FloatRect rect1 = (*draw.value().back).getGlobalBounds();
+                    sf::FloatRect rect2;
+                    for (size_t i = 0; i < bullets.size(); ++ i)
+                    {
+                        auto &bull = bullets[i];
+                        if (bull)
+                            rect2 = (*bull.value().me).getGlobalBounds();
+                        if (rect1.intersects(rect2))
+                        {
+                            //std::cout << "touched" << std::endl;
+                            draw.value().state += 1;
+                            //bull.value().touchable = 0;
+                        }
+                    }
+                    //}
+
+                    auto shape(draw.value().back);
+                    // auto shape(draw.value().back);
+                    float one = positions[i].value()._position.first;
+                    float two = positions[i].value()._position.second;
+                    // std::cout << i << "dPos : " << one << std::endl;
+                    _lib.setPosition(shape, (sf::Vector2f){one, two});
+                    //if (draw.value().state < 2)
+                    _lib.draw_sprites(_win, shape);
+                }
+            }
+        }
+    };
+
+    class MovePU
+    {
+    public:
+        /**
+         * @brief Construct a new Scrolling Class object
+         *
+         * @param lib
+         */
+        MovePU(MyLib &lib) : _lib(lib) {}
+
+        /**
+         * @brief Destroy the Scrolling Class object
+         *
+         */
+        ~MovePU(){};
+        MyLib &_lib;
+
+        /**
+         * @brief Establish the scrolling of the parallax background
+         *
+         * @param r
+         */
+        void MovePUSystem(Registry &r)
+        {
+            auto &positions = r.get_components<Position>();
+            auto &scrolling = r.get_components<Scrolling_x>();
+            auto &drawable = r.get_components<Power_Up>();
+
+            for (size_t i = 0; i < positions.size() && i < scrolling.size() && i < drawable.size(); ++i)
+            {
+                auto &pos = positions[i];
+                auto const &scr = scrolling[i];
+                auto const &draw = drawable[i];
+                if (pos && scr && draw)
+                {
+                    auto clock(draw.value().m_clock);
+                    sf::Time time = _lib.ElapsedTime(clock);
+                    if ((int)(time.asMilliseconds()) > 130)
+                    {
+                        if (pos.value()._position.first <= -500)
+                            pos.value()._position.first = 1400;
+                        else
+                            pos.value()._position.first -= 10;
+                        time = _lib.ClockRestart(clock);
+                    }
+                }
+            }
+        }
+    };
+
+    class MoveEnemyBullet
+    {
+        public:
+        /**
+         * @brief Construct a new Draw Sprite System object
+         *
+         * @param window
+         * @param lib
+         */
+        MoveEnemyBullet(sf::RenderWindow &window, MyLib &lib) : _win(window), _lib(lib) {}
+
+        /**
+         * @brief Destroy the Draw Sprite System object
+         *
+         */
+        ~MoveEnemyBullet(){};
+        sf::RenderWindow &_win;
+        MyLib &_lib;
+
+        /**
+         * @brief Draw a sprite
+         *
+         * @param r
+         */
+        void drawing_shape(Registry &r)
+        {
+            auto &drawable = r.get_components<Bullet_x>();
+            auto &positions = r.get_components<Position>();
+            auto &control = r.get_components<DrawableSprite_x>();
+            // std::cout << "ok" << std::endl;
+
+            for (size_t i = 0; i < drawable.size() && i < positions.size() && i < control.size(); ++i)
+            {
+                auto &draw = drawable[i];
+                auto &pos = positions[i];
+                auto &ctrl = control[i];
+                if (draw && pos && ctrl)
+                {
+                    auto shape(draw.value().back);
+                    // auto shape(draw.value().back);
+                    auto clock(draw.value().m_clock);
+                    sf::Time time = _lib.ElapsedTime(clock);
+                    if ((int)(time.asMicroseconds()) > 10 && ctrl.value().alive == 1)
+                    {
+                        if (draw.value().shot == 0)
+                        //{
+                            // std::cout << "ok" << std::endl;
+                            draw.value().x = positions[i].value()._position.first;
+                            draw.value().y = 20 + positions[i].value()._position.second;
+                            _lib.setPosition(shape, (sf::Vector2f){draw.value().x, draw.value().y});
+                            // sprite_x.setPosition(sf::Vector2f(sprite.getPosition().x + 80, sprite.getPosition().y + 80));
+                            draw.value().shot = 1;
+                        //}
+                        if (draw.value().shot != 0)
+                        {
+                            // get = sprite_x.getPosition();
+                            draw.value().x -= 2;
+                            _lib.setPosition(shape, (sf::Vector2f){draw.value().x, draw.value().y});
+                            _lib.draw_sprites(_win, shape);
+                            // sprite_x.setPosition(get);
+                        }
+                        if (draw.value().x <= 0)
+                        {
+                            draw.value().x = positions[i].value()._position.first;
+                            draw.value().y = 20 + positions[i].value()._position.second;
+                            _lib.setPosition(shape, (sf::Vector2f){draw.value().x, draw.value().y});
+                            // sprite_x.setPosition(sf::Vector2f(sprite.getPosition().x + 80, sprite.getPosition().y + 80));
+                            draw.value().shot = 0;
+                        }
+                        time = _lib.ClockRestart(clock);
+                    }
+                }
+            }
+        }
     };
 
     class MoveBullet
@@ -80,22 +381,24 @@ namespace MyComponents
             auto &drawable = r.get_components<Bullet>();
             auto &positions = r.get_components<Position>();
             auto &control = r.get_components<Controllable>();
+            auto &player = r.get_components<Drawable>();
             // std::cout << "ok" << std::endl;
 
-            for (size_t i = 0; i < drawable.size() && i < positions.size() && i < control.size(); ++i)
+            for (size_t i = 0; i < player.size() && i < drawable.size() && i < positions.size() && i < control.size(); ++i)
             {
                 auto &draw = drawable[i];
                 auto &pos = positions[i];
                 auto &ctrl = control[i];
-                if (draw && pos && ctrl)
+                auto &pl = player[i];
+                if (draw && pos && ctrl && pl)
                 {
                     auto shape(draw.value().back);
                     // auto shape(draw.value().back);
                     auto clock(draw.value().m_clock);
                     sf::Time time = _lib.ElapsedTime(clock);
-                    if ((int)(time.asMicroseconds()) > 1)
+                    if ((int)(time.asMicroseconds()) > 1 && pl.value().life >= 0)
                     {
-                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) == true && draw.value().shot == 0)
+                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) == true && pl.value().life >= 0)
                         {
                             // std::cout << "ok" << std::endl;
                             draw.value().x = 140 + positions[i].value()._position.first;
@@ -129,94 +432,99 @@ namespace MyComponents
 
     class DrawSpriteSystem
     {
-        public:
+    public:
+        /**
+         * @brief Construct a new Draw Sprite System object
+         *
+         * @param window
+         * @param lib
+         */
+        DrawSpriteSystem(sf::RenderWindow &window, MyLib &lib) : _win(window), _lib(lib) {}
 
-            /**
-             * @brief Construct a new Draw Sprite System object
-             *
-             * @param window
-             * @param lib
-             */
-            DrawSpriteSystem(sf::RenderWindow &window, MyLib &lib) : _win(window), _lib(lib){}
+        /**
+         * @brief Destroy the Draw Sprite System object
+         *
+         */
+        ~DrawSpriteSystem(){};
+        sf::RenderWindow &_win;
+        MyLib &_lib;
 
-            /**
-             * @brief Destroy the Draw Sprite System object
-             *
-             */
-            ~DrawSpriteSystem(){};
-            sf::RenderWindow &_win;
-            MyLib &_lib;
+        /**
+         * @brief Draw a sprite
+         *
+         * @param r
+         */
+        void drawing_shape(Registry &r)
+        {
+            auto &drawable = r.get_components<DrawableSprite>();
+            auto &positions = r.get_components<Position>();
 
-            /**
-             * @brief Draw a sprite
-             *
-             * @param r
-             */
-            void drawing_shape(Registry &r) {
-                auto &drawable = r.get_components<DrawableSprite>();
-                auto &positions = r.get_components<Position>();
-
-                for (size_t i = 0; i < drawable.size() && i < positions.size(); ++ i) {
-                    auto &draw = drawable[i];
-                    auto &pos = positions[i];
-                    if (draw && pos) {
-                        auto shape(draw.value().back);
-                        // auto shape(draw.value().back);
-                        float one = positions[i].value()._position.first;
-                        float two = positions[i].value()._position.second;
-                        // std::cout << i << "dPos : " << one << std::endl;
-                        _lib.setPosition(shape, (sf::Vector2f){one, two});
-                        _lib.draw_sprites(_win, shape);
-                    }
+            for (size_t i = 0; i < drawable.size() && i < positions.size(); ++i)
+            {
+                auto &draw = drawable[i];
+                auto &pos = positions[i];
+                if (draw && pos)
+                {
+                    auto shape(draw.value().back);
+                    // auto shape(draw.value().back);
+                    float one = positions[i].value()._position.first;
+                    float two = positions[i].value()._position.second;
+                    // std::cout << i << "dPos : " << one << std::endl;
+                    _lib.setPosition(shape, (sf::Vector2f){one, two});
+                    _lib.draw_sprites(_win, shape);
                 }
             }
+        }
     };
 
     class ScrollingClass
     {
-        public:
+    public:
+        /**
+         * @brief Construct a new Scrolling Class object
+         *
+         * @param lib
+         */
+        ScrollingClass(MyLib &lib) : _lib(lib) {}
 
-            /**
-             * @brief Construct a new Scrolling Class object
-             *
-             * @param lib
-             */
-            ScrollingClass(MyLib &lib) : _lib(lib){}
+        /**
+         * @brief Destroy the Scrolling Class object
+         *
+         */
+        ~ScrollingClass(){};
+        MyLib &_lib;
 
-            /**
-             * @brief Destroy the Scrolling Class object
-             *
-             */
-            ~ScrollingClass(){};
-            MyLib &_lib;
+        /**
+         * @brief Establish the scrolling of the parallax background
+         *
+         * @param r
+         */
+        void ScrollingSystem(Registry &r)
+        {
+            auto &positions = r.get_components<Position>();
+            auto &scrolling = r.get_components<Scrolling>();
+            auto &drawable = r.get_components<DrawableSprite>();
 
-            /**
-             * @brief Establish the scrolling of the parallax background
-             *
-             * @param r
-             */
-            void ScrollingSystem(Registry &r) {
-                auto &positions = r.get_components<Position>();
-                auto &scrolling = r.get_components<Scrolling>();
-                auto &drawable = r.get_components<DrawableSprite>();
-
-                for (size_t i = 0; i < positions.size() && i < scrolling.size() && i < drawable.size(); ++ i) {
-                    auto &pos = positions[i];
-                    auto const &scr = scrolling[i];
-                    auto const &draw = drawable[i];
-                    if (pos && scr && draw) {
-                        auto clock(draw.value().m_clock);
-                        sf::Time time = _lib.ElapsedTime(clock);
-                        if ((int)(time.asMilliseconds()) > 130) {
-                            if (pos.value()._position.first <= -1300)
-                                pos.value()._position.first = 0;
-                            else
-                                pos.value()._position.first -= scr.value().scroll_value;
-                            time = _lib.ClockRestart(clock);
-                        }
+            for (size_t i = 0; i < positions.size() && i < scrolling.size() && i < drawable.size(); ++i)
+            {
+                auto &pos = positions[i];
+                auto const &scr = scrolling[i];
+                auto const &draw = drawable[i];
+                if (pos && scr && draw)
+                {
+                    auto clock(draw.value().m_clock);
+                    sf::Time time = _lib.ElapsedTime(clock);
+                    if ((int)(time.asMilliseconds()) > 130)
+                    {
+                        if (pos.value()._position.first <= -1300)
+                            pos.value()._position.first = 0;
+                        else
+                            pos.value()._position.first -= scr.value().scroll_value;
+                        time = _lib.ClockRestart(clock);
                     }
                 }
             }
+        }
     };
 
     class DrawEnemySystem
@@ -228,7 +536,8 @@ namespace MyComponents
          * @param window
          * @param lib
          */
-        DrawEnemySystem(sf::RenderWindow &window, MyLib &lib) : _win(window), _lib(lib) {}
+        DrawEnemySystem(sf::RenderWindow &window, MyLib &lib) : _win(window), _lib(lib) {
+        }
 
         /**
          * @brief Destroy the Draw Sprite System object
@@ -256,13 +565,13 @@ namespace MyComponents
                 auto &bull = bullets[0];
                 if (draw && pos)
                 {
-                    sf::FloatRect rect1 = (*draw.value().back).getGlobalBounds();
                     // for (size_t j = 0; j < bullets.size(); ++ j) {
+                    sf::FloatRect rect1 = (*draw.value().back).getGlobalBounds();
                     sf::FloatRect rect2 = (*bull.value().back).getGlobalBounds();
                     //}
                     if (rect1.intersects(rect2))
                     {
-                        std::cout << "touched" << std::endl;
+                        //std::cout << "touched" << std::endl;
                         draw.value().state += 1;
                     }
                     auto shape(draw.value().back);
@@ -280,49 +589,73 @@ namespace MyComponents
 
     class MoveEnemy
     {
-        public:
+    public:
+        /**
+         * @brief Construct a new Scrolling Class object
+         *
+         * @param lib
+         */
+        MoveEnemy(MyLib &lib) : _lib(lib) {
+            rect = sf::IntRect(0, 0, 99, 99);
+            rect2 = sf::IntRect(0,0,110,114);
+        }
 
-            /**
-             * @brief Construct a new Scrolling Class object
-             *
-             * @param lib
-             */
-            MoveEnemy(MyLib &lib) : _lib(lib){}
+        /**
+         * @brief Destroy the Scrolling Class object
+         *
+         */
+        ~MoveEnemy(){};
+        MyLib &_lib;
+        sf::IntRect rect;
+        sf::IntRect rect2;
 
-            /**
-             * @brief Destroy the Scrolling Class object
-             *
-             */
-            ~MoveEnemy(){};
-            MyLib &_lib;
+        /**
+         * @brief Establish the scrolling of the parallax background
+         *
+         * @param r
+         */
+        void MoveEnemySystem(Registry &r)
+        {
+            auto &positions = r.get_components<Position>();
+            auto &scrolling = r.get_components<Scrolling_x>();
+            auto &drawable = r.get_components<DrawableSprite_x>();
 
-            /**
-             * @brief Establish the scrolling of the parallax background
-             *
-             * @param r
-             */
-            void MoveEnemySystem(Registry &r) {
-                auto &positions = r.get_components<Position>();
-                auto &scrolling = r.get_components<Scrolling_x>();
-                auto &drawable = r.get_components<DrawableSprite_x>();
-
-                for (size_t i = 0; i < positions.size() && i < scrolling.size() && i < drawable.size(); ++ i) {
-                    auto &pos = positions[i];
-                    auto const &scr = scrolling[i];
-                    auto const &draw = drawable[i];
-                    if (pos && scr && draw) {
-                        auto clock(draw.value().m_clock);
-                        sf::Time time = _lib.ElapsedTime(clock);
-                        if ((int)(time.asMilliseconds()) > 130) {
-                            if (pos.value()._position.first <= -500)
-                                pos.value()._position.first = 1400;
-                            else
-                                pos.value()._position.first -= scr.value().scroll_value;
-                            time = _lib.ClockRestart(clock);
+            for (size_t i = 0; i < positions.size() && i < scrolling.size() && i < drawable.size(); ++i)
+            {
+                auto &pos = positions[i];
+                auto const &scr = scrolling[i];
+                auto &draw = drawable[i];
+                if (pos && scr && draw)
+                {
+                    auto clock(draw.value().m_clock);
+                    sf::Time time = _lib.ElapsedTime(clock);
+                    if ((int)(time.asMilliseconds()) > 130)
+                    {
+                        if (rect.left != 198)
+                            rect.left += 99;
+                        else
+                            rect.left = 0;
+                        if (rect2.left != 220)
+                            rect2.left += 110;
+                        else
+                            rect2.left = 0;
+                        if (draw.value().type == 2)
+                            (*draw.value().back).setTextureRect(rect);
+                        if (draw.value().type == 1)
+                            (*draw.value().back).setTextureRect(rect2);
+                        if (pos.value()._position.first <= 0 || draw.value().state >= 2)
+                        {
+                            pos.value()._position.first = 1400;
+                            pos.value()._position.second = rand() % 500;
+                            draw.value().state = 0;
                         }
+                        else
+                            pos.value()._position.first -= 15;
+                        time = _lib.ClockRestart(clock);
                     }
                 }
             }
+        }
     };
 
     class Menu
@@ -536,7 +869,7 @@ namespace MyComponents
             tchoose.setStyle(sf::Text::Bold);
             tchoose.setPosition(1366 / 2.5, 480);
         }
-        ~Menu() {};
+        ~Menu(){};
         void drawMenu()
         {
             my_mouse = sf::Mouse::getPosition();
@@ -796,7 +1129,7 @@ namespace MyComponents
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
                     n = 0;
             }
-            std::cout << "n = " << n << std::endl;
+            //std::cout << "n = " << n << std::endl;
             window.display();
         };
         int level;
@@ -894,6 +1227,7 @@ namespace MyComponents
         float y;
         float scroll_credit;
     };
+
 }
 
 #endif /* !PARALLAX_HPP_ */

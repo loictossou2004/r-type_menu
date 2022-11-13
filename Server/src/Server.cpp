@@ -53,81 +53,22 @@ void NetWorkServer::ManageHostEnet()
                 printf ("A new client connected from %x:%u.\n",
                 event.peer->address.host,
                 event.peer->address.port);
-
-                int numberC =  0;
-                ENetPeer *currentPeer;
-                ENetPeer *peer_new;
-                for (currentPeer = server -> peers; currentPeer < & server -> peers [server -> peerCount]; ++ currentPeer) {
-                    if (currentPeer -> state != ENET_PEER_STATE_CONNECTED)
-                        continue;
-                    numberC++;
-                }
-                vector<ENetPeer*> VecPeer;
-                for (currentPeer = server -> peers; currentPeer < & server -> peers [server -> peerCount]; ++ currentPeer) {
-                    if (currentPeer -> state != ENET_PEER_STATE_CONNECTED)
-                        continue;
-                    peer_new = currentPeer;
-                    std::string message_Send = "Players Connected: " + std::to_string(numberC);
-                    ENetPacket *packet = enet_packet_create(message_Send.c_str(), message_Send.length(), ENET_PACKET_FLAG_RELIABLE);
-                    VecPeer.push_back(peer_new);
-                    enet_peer_send(currentPeer, 0, packet);
-                }
-                if (id_Client.size() == 0)
-                    id_Client.insert(pair<int, ENetPeer*>(numberC, peer_new));
-                else {
-                    bool check = 0;
-                    map<int, ENetPeer*>::iterator itr;
-                    for (itr = id_Client.begin(); itr != id_Client.end(); ++itr)
-                        if (itr->second == nullptr) {
-                            check= true;
-                            break;
-                        }
-                    if (check == true)
-                        id_Client[itr->first] = VecPeer[itr->first-1];
-                    else
-                        id_Client.insert(pair<int, ENetPeer*>(id_Client.end()->first + 1, peer_new));
-                }
                 break;
             }
             else if (event.type == ENET_EVENT_TYPE_RECEIVE) {
-                unsigned char *str = (unsigned char *) event.packet->data;
-                const char* test = (const char*) str;
-                string myData = (string) test;
+                printf ("A packet of length %lu containing %s was received from %x:%u on channel %u.\n",
+                        event.packet -> dataLength,
+                        event.packet -> data,
+                        event.peer -> address.host,
+                        event.peer -> address.port,
+                        event.channelID);
                 enet_packet_destroy(event.packet);
-                if (strncmp(myData.c_str(), "Position", strlen("Position")) == 0) {
-                    ENetPeer *currentPeer;
-                    map<int, ENetPeer*>::iterator itr;
-                    for (itr = id_Client.begin(); itr != id_Client.end(); ++itr)
-                        if (itr->second == event.peer) {
-                            break;
-                        }
-                    myData +=  "__" + to_string(itr->first);
-                    //cout << myData << "\n";
-                    for (currentPeer = server -> peers; currentPeer < & server -> peers [server -> peerCount]; ++ currentPeer) {
-                        if (currentPeer -> state != ENET_PEER_STATE_CONNECTED || event.peer == currentPeer)
-                            continue;
-                        ENetPacket *packet = enet_packet_create(myData.c_str(), myData.length(), ENET_PACKET_FLAG_RELIABLE);
-                        enet_peer_send(currentPeer, 0, packet);
-                    }
-                }
                 break;
             }
             else if (event.type == ENET_EVENT_TYPE_DISCONNECT) {
-                printf ("[508]: %x:%u disconnected\n",
+                printf ("%x:%u disconnected\n",
                 event.peer->address.host,
                 event.peer->address.port);
-
-                map<int, ENetPeer*>::iterator itr;
-                for (itr = id_Client.begin(); itr != id_Client.end(); ++itr)
-                    if (itr->second == event.peer)
-                        break;
-                id_Client[itr->first] = nullptr;
-                for (itr = id_Client.begin(); itr != id_Client.end(); ++itr) {
-                    cout << '\t' << itr->first << '\t' << itr->second
-                        << '\n';
-                }
-                cout << endl;
-
                 break;
             }
         }

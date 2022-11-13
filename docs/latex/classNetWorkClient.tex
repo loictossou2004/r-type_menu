@@ -1,14 +1,5 @@
 \hypertarget{classNetWorkClient}{}\doxysection{Net\+Work\+Client Class Reference}
 \label{classNetWorkClient}\index{NetWorkClient@{NetWorkClient}}
-
-
-Class for Net\+Work Client.  
-
-
-
-
-{\ttfamily \#include $<$Client.\+hpp$>$}
-
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -29,25 +20,24 @@ int \mbox{\hyperlink{classNetWorkClient_aa9a0f2c161b781047d83a4c6cab1f0dd}{addre
 \begin{DoxyCompactList}\small\item\em Attempts to resolve the host named by the parameter host\+Name and sets the host fieldin the address parameter if successful. \end{DoxyCompactList}\item 
 E\+Net\+Peer $\ast$ \mbox{\hyperlink{classNetWorkClient_a0d08c7fb34baef6e1502c27409568436}{connect\+\_\+host\+\_\+\+Client}} ()
 \begin{DoxyCompactList}\small\item\em It accepts the address of a foreign host to connect to, and the number of channels that should be allocated for communication If N channels are allocated for use, their channel ids will be numbered 0 through N-\/1. \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{classNetWorkClient_a3b7f48af5ec75720ff98fe8fff38946d}{Host\+\_\+service}} (int timezone)
+\mbox{\Hypertarget{classNetWorkClient_a3b7f48af5ec75720ff98fe8fff38946d}\label{classNetWorkClient_a3b7f48af5ec75720ff98fe8fff38946d}} 
+int {\bfseries Host\+\_\+service} (int timezone)
 \item 
-void \mbox{\hyperlink{classNetWorkClient_a752467a59df6d19f9f3e0e26adf0e533}{disconnect\+\_\+peer}} ()
-\begin{DoxyCompactList}\small\item\em Disconnect peer. \end{DoxyCompactList}\item 
-E\+Net\+Host $\ast$ \mbox{\hyperlink{classNetWorkClient_af86186c4ac886fc44caa9f929e8ad2e7}{get\+\_\+\+C\+Lient}} ()
-\begin{DoxyCompactList}\small\item\em Get the C\+Lient object. \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{classNetWorkClient_ac41038ab593025ee7559ceeb84581c33}{Connection\+\_\+and\+\_\+initialize}} ()
-\begin{DoxyCompactList}\small\item\em Connection and intiliaziation of variables. \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{classNetWorkClient_a433eb5ef89a17a979dff8639843ee7d3}{Msg\+Loop}} ()
-\begin{DoxyCompactList}\small\item\em loop to get Message \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{classNetWorkClient_afd0886cd03b85a9c051ba8159e1a4b78}{Client\+\_\+\+Loop\+Start}} ()
-\begin{DoxyCompactList}\small\item\em start Client loop \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{classNetWorkClient_a9f091b61bd3ecd421a975745d9fabe27}{Deconnection\+Host}} ()
-\begin{DoxyCompactList}\small\item\em message when you disconnect \end{DoxyCompactList}\end{DoxyCompactItemize}
-
-
-\doxysubsection{Detailed Description}
-Class for Net\+Work Client. 
-
+\mbox{\Hypertarget{classNetWorkClient_a752467a59df6d19f9f3e0e26adf0e533}\label{classNetWorkClient_a752467a59df6d19f9f3e0e26adf0e533}} 
+void {\bfseries disconnect\+\_\+peer} ()
+\item 
+\mbox{\Hypertarget{classNetWorkClient_af86186c4ac886fc44caa9f929e8ad2e7}\label{classNetWorkClient_af86186c4ac886fc44caa9f929e8ad2e7}} 
+E\+Net\+Host $\ast$ {\bfseries get\+\_\+\+C\+Lient} ()
+\item 
+\mbox{\Hypertarget{classNetWorkClient_ac41038ab593025ee7559ceeb84581c33}\label{classNetWorkClient_ac41038ab593025ee7559ceeb84581c33}} 
+int {\bfseries Connection\+\_\+and\+\_\+initialize} ()
+\item 
+\mbox{\Hypertarget{classNetWorkClient_a433eb5ef89a17a979dff8639843ee7d3}\label{classNetWorkClient_a433eb5ef89a17a979dff8639843ee7d3}} 
+void {\bfseries Msg\+Loop} ()
+\item 
+\mbox{\Hypertarget{classNetWorkClient_afd0886cd03b85a9c051ba8159e1a4b78}\label{classNetWorkClient_afd0886cd03b85a9c051ba8159e1a4b78}} 
+void {\bfseries Client\+\_\+\+Loop\+Start} ()
+\end{DoxyCompactItemize}
 
 
 \doxysubsection{Constructor \& Destructor Documentation}
@@ -107,16 +97,6 @@ Register a function to be called when `exit' is called.
 \begin{DoxyReturn}{Returns}
 int 
 \end{DoxyReturn}
-\mbox{\Hypertarget{classNetWorkClient_afd0886cd03b85a9c051ba8159e1a4b78}\label{classNetWorkClient_afd0886cd03b85a9c051ba8159e1a4b78}} 
-\index{NetWorkClient@{NetWorkClient}!Client\_LoopStart@{Client\_LoopStart}}
-\index{Client\_LoopStart@{Client\_LoopStart}!NetWorkClient@{NetWorkClient}}
-\doxysubsubsection{\texorpdfstring{Client\_LoopStart()}{Client\_LoopStart()}}
-{\footnotesize\ttfamily void Net\+Work\+Client\+::\+Client\+\_\+\+Loop\+Start (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
-
-
-start Client loop 
-
 \mbox{\Hypertarget{classNetWorkClient_a0d08c7fb34baef6e1502c27409568436}\label{classNetWorkClient_a0d08c7fb34baef6e1502c27409568436}} 
 \index{NetWorkClient@{NetWorkClient}!connect\_host\_Client@{connect\_host\_Client}}
 \index{connect\_host\_Client@{connect\_host\_Client}!NetWorkClient@{NetWorkClient}}
@@ -129,19 +109,6 @@ It accepts the address of a foreign host to connect to, and the number of channe
 
 \begin{DoxyReturn}{Returns}
 E\+Net\+Peer$\ast$ 
-\end{DoxyReturn}
-\mbox{\Hypertarget{classNetWorkClient_ac41038ab593025ee7559ceeb84581c33}\label{classNetWorkClient_ac41038ab593025ee7559ceeb84581c33}} 
-\index{NetWorkClient@{NetWorkClient}!Connection\_and\_initialize@{Connection\_and\_initialize}}
-\index{Connection\_and\_initialize@{Connection\_and\_initialize}!NetWorkClient@{NetWorkClient}}
-\doxysubsubsection{\texorpdfstring{Connection\_and\_initialize()}{Connection\_and\_initialize()}}
-{\footnotesize\ttfamily int Net\+Work\+Client\+::\+Connection\+\_\+and\+\_\+initialize (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
-
-
-Connection and intiliaziation of variables. 
-
-\begin{DoxyReturn}{Returns}
-int 
 \end{DoxyReturn}
 \mbox{\Hypertarget{classNetWorkClient_a69fa8a9d6563f4d024479b4f87ee0337}\label{classNetWorkClient_a69fa8a9d6563f4d024479b4f87ee0337}} 
 \index{NetWorkClient@{NetWorkClient}!create\_Host@{create\_Host}}
@@ -156,26 +123,6 @@ Create a Client Host enet with number outgoing connection, number channels to be
 \begin{DoxyReturn}{Returns}
 E\+Net\+Host$\ast$ 
 \end{DoxyReturn}
-\mbox{\Hypertarget{classNetWorkClient_a9f091b61bd3ecd421a975745d9fabe27}\label{classNetWorkClient_a9f091b61bd3ecd421a975745d9fabe27}} 
-\index{NetWorkClient@{NetWorkClient}!DeconnectionHost@{DeconnectionHost}}
-\index{DeconnectionHost@{DeconnectionHost}!NetWorkClient@{NetWorkClient}}
-\doxysubsubsection{\texorpdfstring{DeconnectionHost()}{DeconnectionHost()}}
-{\footnotesize\ttfamily void Net\+Work\+Client\+::\+Deconnection\+Host (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
-
-
-message when you disconnect 
-
-\mbox{\Hypertarget{classNetWorkClient_a752467a59df6d19f9f3e0e26adf0e533}\label{classNetWorkClient_a752467a59df6d19f9f3e0e26adf0e533}} 
-\index{NetWorkClient@{NetWorkClient}!disconnect\_peer@{disconnect\_peer}}
-\index{disconnect\_peer@{disconnect\_peer}!NetWorkClient@{NetWorkClient}}
-\doxysubsubsection{\texorpdfstring{disconnect\_peer()}{disconnect\_peer()}}
-{\footnotesize\ttfamily void Net\+Work\+Client\+::disconnect\+\_\+peer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
-
-
-Disconnect peer. 
-
 \mbox{\Hypertarget{classNetWorkClient_a50d6139acb752d5b3648fdf4b8480c6a}\label{classNetWorkClient_a50d6139acb752d5b3648fdf4b8480c6a}} 
 \index{NetWorkClient@{NetWorkClient}!enet\_initialized@{enet\_initialized}}
 \index{enet\_initialized@{enet\_initialized}!NetWorkClient@{NetWorkClient}}
@@ -189,43 +136,6 @@ initializes E\+Net globally. Must be called prior to using any functions in E\+N
 \begin{DoxyReturn}{Returns}
 int 0 for success or $<$ 0 for failure 
 \end{DoxyReturn}
-\mbox{\Hypertarget{classNetWorkClient_af86186c4ac886fc44caa9f929e8ad2e7}\label{classNetWorkClient_af86186c4ac886fc44caa9f929e8ad2e7}} 
-\index{NetWorkClient@{NetWorkClient}!get\_CLient@{get\_CLient}}
-\index{get\_CLient@{get\_CLient}!NetWorkClient@{NetWorkClient}}
-\doxysubsubsection{\texorpdfstring{get\_CLient()}{get\_CLient()}}
-{\footnotesize\ttfamily E\+Net\+Host$\ast$ Net\+Work\+Client\+::get\+\_\+\+C\+Lient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
-
-
-Get the C\+Lient object. 
-
-\begin{DoxyReturn}{Returns}
-E\+Net\+Host$\ast$ 
-\end{DoxyReturn}
-\mbox{\Hypertarget{classNetWorkClient_a3b7f48af5ec75720ff98fe8fff38946d}\label{classNetWorkClient_a3b7f48af5ec75720ff98fe8fff38946d}} 
-\index{NetWorkClient@{NetWorkClient}!Host\_service@{Host\_service}}
-\index{Host\_service@{Host\_service}!NetWorkClient@{NetWorkClient}}
-\doxysubsubsection{\texorpdfstring{Host\_service()}{Host\_service()}}
-{\footnotesize\ttfamily int Net\+Work\+Client\+::\+Host\+\_\+service (\begin{DoxyParamCaption}\item[{int}]{timezone }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
-
-\begin{DoxyParams}{Parameters}
-{\em timezone} & \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-int 
-\end{DoxyReturn}
-\mbox{\Hypertarget{classNetWorkClient_a433eb5ef89a17a979dff8639843ee7d3}\label{classNetWorkClient_a433eb5ef89a17a979dff8639843ee7d3}} 
-\index{NetWorkClient@{NetWorkClient}!MsgLoop@{MsgLoop}}
-\index{MsgLoop@{MsgLoop}!NetWorkClient@{NetWorkClient}}
-\doxysubsubsection{\texorpdfstring{MsgLoop()}{MsgLoop()}}
-{\footnotesize\ttfamily void Net\+Work\+Client\+::\+Msg\+Loop (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
-
-
-loop to get Message 
-
 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}

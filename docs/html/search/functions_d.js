@@ -1,6 +1,12 @@
 var searchData=
 [
-  ['register_5fcomponent_154',['register_component',['../classRegistry.html#adf45da5951b68c121e0a1f45cf0bc951',1,'Registry']]],
-  ['remove_5fcomponent_155',['remove_component',['../classRegistry.html#a8af690a38f4982d9479401e7c69c33d2',1,'Registry']]],
-  ['runserverenet_156',['RunServerEnet',['../classNetWorkServer.html#a75d252c32d65071f78912ba10eed374b',1,'NetWorkServer']]]
+  ['_7edrawenemysystem_116',['~DrawEnemySystem',['../classMyComponents_1_1DrawEnemySystem.html#ae9326e497d021b8682d008186b16b589',1,'MyComponents::DrawEnemySystem']]],
+  ['_7edrawspritesystem_117',['~DrawSpriteSystem',['../classMyComponents_1_1DrawSpriteSystem.html#aaf0ac91a2bd127216f7a0afd508b869a',1,'MyComponents::DrawSpriteSystem']]],
+  ['_7edrawsystem_118',['~DrawSystem',['../classMyComponents_1_1DrawSystem.html#ad451ac3c1f98828a76470ad86f45e6d7',1,'MyComponents::DrawSystem']]],
+  ['_7eentity_5ft_119',['~entity_t',['../classentity__t.html#a3f9d1c544614b7f39b9b6b45f2895a4f',1,'entity_t']]],
+  ['_7emoveenemy_120',['~MoveEnemy',['../classMyComponents_1_1MoveEnemy.html#a5c43326ddfcd35ac4abe46b69ae11989',1,'MyComponents::MoveEnemy']]],
+  ['_7emovesystem_121',['~MoveSystem',['../classMyComponents_1_1MoveSystem.html#a71680db61a906af98cd25ca7d93bd4df',1,'MyComponents::MoveSystem']]],
+  ['_7enetworkclient_122',['~NetWorkClient',['../classNetWorkClient.html#aed181698524349b29350e980e30954c4',1,'NetWorkClient']]],
+  ['_7escrollingclass_123',['~ScrollingClass',['../classMyComponents_1_1ScrollingClass.html#a16b26d2d4c9848c3f93636883775e234',1,'MyComponents::ScrollingClass']]],
+  ['_7esparse_5farray_124',['~Sparse_array',['../classSparse__array.html#aac474fc67c4872e24ff2c458d15f6bc7',1,'Sparse_array']]]
 ];
