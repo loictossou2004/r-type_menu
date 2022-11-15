@@ -84,9 +84,11 @@ namespace MyComponents
              */
             DrawSystem(sf::RenderWindow &window, MyLib &lib) : _win(window), _lib(lib){
                 texture.loadFromFile("assets/ParallaxAssets/life.png");
+                text.loadFromFile("assets/ParallaxAssets/shield.png");
                 //sf::IntRect rect1(0, 0, 171, 36.4);
                 rect = sf::IntRect(0, 0, 171, 36.4);
                 sprite = sf::Sprite(texture, rect);
+                spr = sf::Sprite(text);
                 //sprite = res;
             }
 
@@ -97,8 +99,10 @@ namespace MyComponents
             ~DrawSystem(){};
             sf::RenderWindow &_win;
             MyLib &_lib;
+            sf::Texture text;
             sf::Texture texture;
             sf::IntRect rect;
+            sf::Sprite spr;
             sf::Sprite sprite;
             /**
              * @brief Create a drawable object
@@ -140,8 +144,9 @@ namespace MyComponents
                         }
                         if (draw.value().state == 1/* && draw.value().touchable == 1*/)
                         {
-                            draw.value().life -= 1;
-                            if (draw.value().life < 4)
+                            if (draw.value().touchable == 1)
+                                draw.value().life -= 1;
+                            if (draw.value().life < 4 && draw.value().touchable == 1)
                                 rect.top += 36.4;
                             draw.value().state = 2;
                         }
@@ -150,11 +155,13 @@ namespace MyComponents
                         auto shape_x(sprite);
                         _lib.setPosition(shape, (sf::Vector2f){one, two});
                         sprite.setPosition((sf::Vector2f){0, 0});
+                        spr.setPosition((sf::Vector2f){one - 50, two - 40});
                         sprite.setTextureRect(rect);
                         _win.draw(sprite);
+                        if (draw.value().touchable == 0)
+                            _win.draw(spr);
                         if (draw.value().life >= 0)
                             _lib.draw_sprites(_win, shape);
-                        std::cout << "state = " << draw.value().state << std::endl;
                     }
                 }
             }
@@ -194,33 +201,28 @@ namespace MyComponents
             {
                 auto &draw = drawable[i];
                 auto &pos = positions[i];
+                auto &bull = bullets[0];
                 if (draw && pos)
                 {
                     // for (size_t j = 0; j < bullets.size(); ++ j) {
                     sf::FloatRect rect1 = (*draw.value().back).getGlobalBounds();
-                    sf::FloatRect rect2;
-                    for (size_t i = 0; i < bullets.size(); ++ i)
+                    sf::FloatRect rect2 = (*bull.value().me).getGlobalBounds();
+                    if (rect1.intersects(rect2))
                     {
-                        auto &bull = bullets[i];
-                        if (bull)
-                            rect2 = (*bull.value().me).getGlobalBounds();
-                        if (rect1.intersects(rect2))
-                        {
-                            //std::cout << "touched" << std::endl;
-                            draw.value().state += 1;
-                            //bull.value().touchable = 0;
-                        }
+                        //std::cout << "touched" << std::endl;
+                        draw.value().state += 1;
+                        //bull.value().touchable = 0;
                     }
-                    //}
-
                     auto shape(draw.value().back);
                     // auto shape(draw.value().back);
                     float one = positions[i].value()._position.first;
                     float two = positions[i].value()._position.second;
                     // std::cout << i << "dPos : " << one << std::endl;
                     _lib.setPosition(shape, (sf::Vector2f){one, two});
-                    //if (draw.value().state < 2)
-                    _lib.draw_sprites(_win, shape);
+                    if (draw.value().state < 2)
+                        _lib.draw_sprites(_win, shape);
+                    else
+                        bull.value().touchable = 0;
                 }
             }
         }
